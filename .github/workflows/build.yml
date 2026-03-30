@@ -7,14 +7,14 @@ on:
 
 jobs:
   build:
-    runs-on: macos-15
+    runs-on: macos-latest
 
     steps:
       - name: checkout
         uses: actions/checkout@v4
 
       - name: select xcode
-        run: sudo xcode-select -s /Applications/Xcode_16.app/Contents/Developer
+        run: sudo xcode-select -s /Applications/Xcode.app
 
       - name: show xcode version
         run: xcodebuild -version
