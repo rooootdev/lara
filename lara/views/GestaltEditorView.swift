@@ -6,7 +6,7 @@ struct GestaltEditorView: View {
     @State private var isLoading: Bool = true
     @State private var statusMessage: String = ""
     
-    let gestaltPath = "/var/containers/Shared/SystemGroup/systemgroup.com.apple.mobilegestaltcache/Library/Caches/com.apple.MobileGestalt.plist"
+    let gestaltPath = "/private/var/containers/Shared/SystemGroup/systemgroup.com.apple.mobilegestaltcache/Library/Caches/com.apple.MobileGestalt.plist"
 
     var body: some View {
         ZStack {
