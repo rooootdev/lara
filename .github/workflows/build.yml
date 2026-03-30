@@ -33,4 +33,6 @@ jobs:
             AD_HOC_CODE_SIGNING_ALLOWED=YES \
             IPHONEOS_DEPLOYMENT_TARGET=16.0 \
             ASSETCATALOG_COMPILER_APPICON_NAME="" \
+            ASSETCATALOG_COMPILER_SKIP_APP_SPECIFIC_ASSETS=YES \
             clean build
+            
