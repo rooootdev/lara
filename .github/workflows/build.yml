@@ -32,7 +32,9 @@ jobs:
             CODE_SIGN_IDENTITY="" \
             AD_HOC_CODE_SIGNING_ALLOWED=YES \
             IPHONEOS_DEPLOYMENT_TARGET=16.0 \
+            HEADER_SEARCH_PATHS='$(inherited) $(PROJECT_DIR)/lara/**' \
+            USER_HEADER_SEARCH_PATHS='$(inherited) $(PROJECT_DIR)/lara/**' \
+            LIBRARY_SEARCH_PATHS='$(inherited) $(PROJECT_DIR)/lara/lib' \
             ASSETCATALOG_COMPILER_APPICON_NAME="" \
             ASSETCATALOG_COMPILER_SKIP_APP_SPECIFIC_ASSETS=YES \
             clean build
-            
