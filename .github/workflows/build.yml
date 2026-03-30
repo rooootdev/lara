@@ -7,16 +7,14 @@ on:
 
 jobs:
   build:
-    # Use macos-15 to ensure Xcode 16.0+ is available
-    runs-on: macos-latest
+    runs-on: macos-15
 
     steps:
       - name: checkout
         uses: actions/checkout@v4
 
       - name: select xcode
-        # Points to the standard location for Xcode 16 on GitHub Runners
-        run: sudo xcode-select -s /Applications/Xcode.app
+        run: sudo xcode-select -s /Applications/Xcode_16.app/Contents/Developer
 
       - name: show xcode version
         run: xcodebuild -version
@@ -31,4 +29,5 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
+            AD_HOC_CODE_SIGNING_ALLOWED=YES \
             clean build
