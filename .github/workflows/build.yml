@@ -48,9 +48,11 @@ jobs:
           zip -r lara.ipa Payload
 
       - name: Create Release
-        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
           files: lara.ipa
+          tag_name: "latest-build"
+          name: "Latest Build"
+          body: "automatically generated"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
