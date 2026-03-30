@@ -9,7 +9,6 @@ jobs:
 build:
 runs-on: macos-latest
 
-```
 steps:
   - name: checkout
     uses: actions/checkout@v4
@@ -31,4 +30,4 @@ steps:
         CODE_SIGNING_REQUIRED=NO \
         CODE_SIGN_IDENTITY="" \
         build
-```
+
