@@ -46,7 +46,6 @@ jobs:
           mkdir -p Payload
           cp -r "$APP_PATH" Payload/
           zip -r lara.ipa Payload
-          mv lara.ipa $GITHUB_WORKSPACE/
 
       - name: Create Release
         if: startsWith(github.ref, 'refs/tags/')
