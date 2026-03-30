@@ -14,6 +14,7 @@ struct ContentView: View {
     @State private var pid: pid_t = getpid()
     @State private var hasoffsets = haskernproc()
     @State private var showsettings = false
+    @State private var showingGestaltEditor = false
     
     var body: some View {
         NavigationStack {
@@ -206,6 +207,19 @@ struct ContentView: View {
                             mgr.panic()
                         }
                         .disabled(!mgr.dsready)
+                        Button(action: {
+                            showingGestaltEditor = true
+                        }) {
+                            Text("Modify MobileGestalt")
+                            .font(.system(size: 15, weight: .bold)
+                                  .frame(maxWidth: .infinity)
+                                  .padding()
+                                  .foregroundColor(.blue)
+                                  .cornerRadius(10)
+                                 }
+                            .sheet(isPresented: $showingGestaltEditor) {
+                                GestaltEditorView()
+                            }
                     } header: {
                         Text("Other")
                     }
