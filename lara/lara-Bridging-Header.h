@@ -17,3 +17,6 @@ uint64_t getrootvnode(void);
 bool haskernproc(void);
 NSString *getkerncache(void);
 void clearkerncachedata(void);
+NSData* vfs_read(NSString* path);
+bool vfs_write(NSString* path, NSData* data);
+int get_pid_for_name(NSString* name);
