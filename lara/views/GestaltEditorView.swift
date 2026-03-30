@@ -126,12 +126,23 @@ func handleImport(result: Result<[URL], Error>) {
             let binaryData = try PropertyListSerialization.data(fromPropertyList: plist, format: .binary, options: 0)
             
             if vfs_write_swift(gestaltPath, binaryData) {
-                statusMessage = "Successfully applied mobilegestalt!"
-                
-                let pid = get_pid_for_name("gestaltd")
-                if pid > 0 {
-                    kill(pid, SIGKILL)
+                statusMessage = "Successfully wrote mobilegestalt, Trying to refresh..."
+
+                for i in 1...3 {
+                    let pid = get_pid_for_name("gestaltd")
+                    if pid > 0 {
+                        kill(pid, SIGKILL)
+                        print("Attempted to refreshe gestaltd (attempt \(i))")
+                    }
+                    Thread.sleep(forTimeInterval: 0.1)
                 }
+
+                let bpid = get_pid_for_name("backboardd")
+                if bpid > 0 {
+                    kill(bpid, SIGKILL)
+                }
+
+                statusMessage = "Applied! Reboot or Respring recommended."
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                     dismiss()
