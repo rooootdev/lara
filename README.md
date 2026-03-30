@@ -15,9 +15,9 @@ If lara doesnt work on your device, and you want to help the project, please als
 ### implemented:
 - Font Overwrite
 - DirtyZero 2 (Broken)
+- MobileGestalt Editor (also probably broken, needs further testing)
 
 ### coming soon:
-- MobileGestalt Editor
 - File Manager (Full Disk r/w)
 
 ## known issues:
