@@ -31,5 +31,6 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
             AD_HOC_CODE_SIGNING_ALLOWED=YES \
-            ASSETCATALOG_COMPILER_APPICON_NAME=AppIcon \
+            IPHONEOS_DEPLOYMENT_TARGET=16.0 \
+            ASSETCATALOG_COMPILER_APPICON_NAME="" \
             clean build
