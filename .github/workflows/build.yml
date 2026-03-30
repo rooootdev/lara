@@ -3,6 +3,7 @@ name: build
 on:
   push:
     branches: [ main ]
+    tags: [ 'v*' ]
   workflow_dispatch:
 
 jobs:
@@ -38,3 +39,19 @@ jobs:
             ASSETCATALOG_COMPILER_APPICON_NAME="" \
             ASSETCATALOG_COMPILER_SKIP_APP_SPECIFIC_ASSETS=YES \
             clean build
+            
+      - name: Create IPA
+        run: |
+          APP_PATH=$(find ~/Library/Developer/Xcode/DerivedData -name "lara.app" -type d | head -n 1)
+          mkdir -p Payload
+          cp -r "$APP_PATH" Payload/
+          zip -r lara.ipa Payload
+          mv lara.ipa $GITHUB_WORKSPACE/
+
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: lara.ipa
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
