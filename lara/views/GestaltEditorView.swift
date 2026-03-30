@@ -67,7 +67,7 @@ struct GestaltEditorView: View {
     }
 
     func loadGestalt() {
-        guard let data = vfs_read(gestaltPath) else {
+        if vfs_write_swift(gestaltPath, binaryData) { ... }
             statusMessage = "Mobilegestalt not found"
             isLoading = false
             return
