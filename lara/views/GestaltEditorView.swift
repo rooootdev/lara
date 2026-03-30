@@ -67,7 +67,7 @@ struct GestaltEditorView: View {
     }
 
     func loadGestalt() {
-        if vfs_write_swift(gestaltPath, binaryData) { ... }
+        guard let data = vfs_read_swift(gestaltPath) else {
             statusMessage = "Mobilegestalt not found"
             isLoading = false
             return
@@ -80,7 +80,7 @@ struct GestaltEditorView: View {
                 self.gestaltText = text
             }
         } catch {
-            statusMessage = "Unknown parse error"
+            statusMessage = "Unknown parse- error: \(error.localizedDescription)"
         }
         isLoading = false
     }
@@ -93,11 +93,13 @@ struct GestaltEditorView: View {
             let plist = try PropertyListSerialization.propertyList(from: xmlData, options: .mutableContainers, format: nil)
             let binaryData = try PropertyListSerialization.data(fromPropertyList: plist, format: .binary, options: 0)
             
-            if vfs_write(gestaltPath, binaryData) {
+            if vfs_write_swift(gestaltPath, binaryData) {
                 statusMessage = "Success"
                 
                 let pid = get_pid_for_name("gestaltd")
-                if pid > 0 { kill(pid, SIGKILL) }
+                if pid > 0 {
+                    kill(pid, SIGKILL)
+                }
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                     dismiss()
