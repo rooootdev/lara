@@ -19,7 +19,7 @@ jobs:
       - name: show xcode version
         run: xcodebuild -version
 
-      - name: build
+   - name: build
         run: |
           xcodebuild \
             -project lara.xcodeproj \
@@ -31,4 +31,5 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
             AD_HOC_CODE_SIGNING_ALLOWED=YES \
+            ASSETCATALOG_COMPILER_APPICON_NAME=AppIcon \
             clean build
