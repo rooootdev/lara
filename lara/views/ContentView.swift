@@ -211,7 +211,7 @@ struct ContentView: View {
                             showingGestaltEditor = true
                         }) {
                             Text("Modify MobileGestalt")
-                            .font(.system(size: 15, weight: .bold)
+                            .font(.system(size: 15, weight: .bold))
                                   .foregroundColor(.blue)
                                   .cornerRadius(10)
                                  }
