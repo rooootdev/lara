@@ -67,7 +67,7 @@ struct GestaltEditorView: View {
     }
 
     func loadGestalt() {
-        guard let data = kfs_read(gestaltPath) else {
+        guard let data = vfs_read(gestaltPath) else {
             statusMessage = "Mobilegestalt not found"
             isLoading = false
             return
@@ -93,7 +93,7 @@ struct GestaltEditorView: View {
             let plist = try PropertyListSerialization.propertyList(from: xmlData, options: .mutableContainers, format: nil)
             let binaryData = try PropertyListSerialization.data(fromPropertyList: plist, format: .binary, options: 0)
             
-            if kfs_write(gestaltPath, binaryData) {
+            if vfs_write(gestaltPath, binaryData) {
                 statusMessage = "Success"
                 
                 let pid = get_pid_for_name("gestaltd")
