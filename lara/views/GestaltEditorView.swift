@@ -89,13 +89,11 @@ func handleImport(result: Result<[URL], Error>) {
         do {
             guard let fileURL = try result.get().first else { return }
             
-            // Security scoped access is REQUIRED when importing files outside your app sandbox
             guard fileURL.startAccessingSecurityScopedResource() else {
                 statusMessage = "Permission denied to read file"
                 isLoading = false
                 return
             }
-            // Ensure we stop accessing the resource when done
             defer { fileURL.stopAccessingSecurityScopedResource() }
             
             let data = try Data(contentsOf: fileURL)
@@ -142,7 +140,7 @@ func handleImport(result: Result<[URL], Error>) {
                     kill(bpid, SIGKILL)
                 }
 
-                statusMessage = "Applied! Reboot or Respring recommended."
+                statusMessage = "Successfuly applied mobilegestalt!"
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                     dismiss()
