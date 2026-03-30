@@ -19,7 +19,7 @@ jobs:
       - name: show xcode version
         run: xcodebuild -version
 
-   - name: build
+      - name: build
         run: |
           xcodebuild \
             -project lara.xcodeproj \
