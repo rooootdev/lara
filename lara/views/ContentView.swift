@@ -212,8 +212,6 @@ struct ContentView: View {
                         }) {
                             Text("Modify MobileGestalt")
                             .font(.system(size: 15, weight: .bold)
-                                  .frame(maxWidth: .infinity)
-                                  .padding()
                                   .foregroundColor(.blue)
                                   .cornerRadius(10)
                                  }
