@@ -52,7 +52,7 @@ struct EmojiPicker: View {
                     }
                     
                     Button {
-                        applyemojis(url :"https://github.com/PoomSmart/EmojiFonts/releases/dow;nload/17.0.0/noto-emoji.ttc",
+                        applyemojis(url :"https://github.com/PoomSmart/EmojiFonts/releases/download/17.0.0/noto-emoji.ttc",
                         label: "noto-emoji.ttc")
                     } label: {
                         Text("Noto Emoji")
