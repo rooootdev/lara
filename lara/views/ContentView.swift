@@ -141,6 +141,10 @@ struct ContentView: View {
                             .disabled(!mgr.dsready || mgr.vfsready || mgr.vfsrunning)
                             
                             if mgr.vfsready {
+                                NavigationLink("Emoji Overwrite") {
+                                    EmojiPicker(mgr: mgr)
+                                }
+                                
                                 NavigationLink("Font Overwrite") {
                                     FontPicker(mgr: mgr)
                                 }
@@ -300,6 +304,10 @@ struct ContentView: View {
                                     NavigationLink("File Manager") {
                                         SantanderView(startPath: "/")
                                     }
+                                }
+                                
+                                NavigationLink("Emoji Overwrite") {
+                                    EmojiPicker(mgr: mgr)
                                 }
                                 
                                 NavigationLink("Font Overwrite") {
