@@ -58,6 +58,7 @@ If lara doesnt work on your device, and you want to help the project, please als
 - doesnt work on ipad m2?
 - doesnt work on a18 pro?
 - kernelcache download broken for some versions.
+- Resetting MobileGestalt within the app bricks phones. (*Dont use the build in reset, no matter what*)
 
 ## installation:
 <a href="https://celloserenity.github.io/altdirect/?url=https://raw.githubusercontent.com/rooootdev/lara/refs/heads/main/source.json" target="_blank">
