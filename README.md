@@ -100,7 +100,7 @@ kernelcache download fix:
 9. Rename the file to "kernelcache" (without extension).
 10. Symolicate the kernelcache and include it inside your Lara folder if the offsets fail to resolve symbols like this
 11. ./ipsw kernel symbolicate --json [KernelCache here]
-
+12. Drag and drop it either in iCloud or Airdrop it to the device and copy over that and make sure it's name is intact alongside your kernelcache
 
 ## installation:
 <a href="https://celloserenity.github.io/altdirect/?url=https://raw.githubusercontent.com/rooootdev/lara/refs/heads/main/source.json" target="_blank">
