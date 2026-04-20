@@ -98,6 +98,9 @@ kernelcache download fix:
    - Go to "On My iPhone" > "lara"
    - Place the kernelcache file there.
 9. Rename the file to "kernelcache" (without extension).
+10. Symolicate the kernelcache and include it inside your Lara folder if the offsets fail to resolve symbols like this
+11. ./ipsw kernel symbolicate --json [KernelCache here]
+
 
 ## installation:
 <a href="https://celloserenity.github.io/altdirect/?url=https://raw.githubusercontent.com/rooootdev/lara/refs/heads/main/source.json" target="_blank">
