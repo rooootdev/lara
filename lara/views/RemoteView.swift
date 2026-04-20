@@ -127,33 +127,37 @@ struct RemoteView: View {
             }
             .disabled(!mgr.rcready || running)
             
-            HStack(alignment: .top) {
-                AsyncImage(url: URL(string: "https://github.com/khanhduytran0.png")) { image in
-                    image
-                        .resizable()
-                        .scaledToFill()
-                } placeholder: {
-                    ProgressView()
-                }
-                .frame(width: 40, height: 40)
-                .clipShape(Circle())
-                
-                VStack(alignment: .leading) {
-                    Text("Duy Tran")
-                        .font(.headline)
+            Section {
+                HStack(alignment: .top) {
+                    AsyncImage(url: URL(string: "https://github.com/khanhduytran0.png")) { image in
+                        image
+                            .resizable()
+                            .scaledToFill()
+                    } placeholder: {
+                        ProgressView()
+                    }
+                    .frame(width: 40, height: 40)
+                    .clipShape(Circle())
                     
-                    Text("Responsible for most things related to remotecall.")
-                        .font(.subheadline)
-                        .foregroundColor(Color.secondary)
+                    VStack(alignment: .leading) {
+                        Text("Duy Tran")
+                            .font(.headline)
+                        
+                        Text("Responsible for most things related to remotecall.")
+                            .font(.subheadline)
+                            .foregroundColor(Color.secondary)
+                    }
+                    
+                    Spacer()
                 }
-                
-                Spacer()
-            }
-            .onTapGesture {
-                if let url = URL(string: "https://github.com/khanhduytran0"),
-                   UIApplication.shared.canOpenURL(url) {
-                    UIApplication.shared.open(url)
+                .onTapGesture {
+                    if let url = URL(string: "https://github.com/khanhduytran0"),
+                       UIApplication.shared.canOpenURL(url) {
+                        UIApplication.shared.open(url)
+                    }
                 }
+            } header: {
+                Text("Credits")
             }
         }
         .navigationTitle(Text("Tweaks"))

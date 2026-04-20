@@ -17,12 +17,13 @@ struct SettingsView: View {
     @State private var showkcacheimporter: Bool = false
     @State private var importingkernelcache: Bool = false
     @State private var showkcachetips: Bool = false
-    @State private var statusMessage: String?
+    @State private var statusmsg: String?
     @AppStorage("loggernobullshit") private var loggernobullshit: Bool = true
     @AppStorage("keepalive") private var iskeepalive: Bool = true
     @AppStorage("showfmintabs") private var showfmintabs: Bool = true
     @AppStorage("selectedmethod") private var selectedmethod: method = .hybrid
     @AppStorage("rcdockunlimited") private var rcdockunlimited: Bool = false
+    @AppStorage("stashkrw") private var stashkrw: Bool = false
     
     var appname: String {
         Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String
@@ -129,11 +130,10 @@ struct SettingsView: View {
 
                 #if !DISABLE_REMOTECALL
                 Section {
+                    Toggle("Stash KRW primitives", isOn: $stashkrw)
                     Toggle("Allow >10 dock icons", isOn: $rcdockunlimited)
                 } header: {
                     Text("RemoteCall")
-                } footer: {
-                    Text("Enables larger dock column counts in RemoteCall tweaks.")
                 }
                 #endif
 
@@ -240,32 +240,120 @@ struct SettingsView: View {
                 }
                 
                 Section {
-                    HStack {
-                        Text("T1SZ_BOOT")
-                        Spacer()
-
-                        TextField("0x19", text: t1szbootbind)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.trailing)
-                            .monospaced()
+                    HStack { Text("off_inpcb_inp_list_le_next"); Spacer(); Text(hex(UInt64(off_inpcb_inp_list_le_next))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_inpcb_inp_pcbinfo"); Spacer(); Text(hex(UInt64(off_inpcb_inp_pcbinfo))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_inpcb_inp_socket"); Spacer(); Text(hex(UInt64(off_inpcb_inp_socket))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_inpcbinfo_ipi_zone"); Spacer(); Text(hex(UInt64(off_inpcbinfo_ipi_zone))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_inpcb_inp_depend6_inp6_icmp6filt"); Spacer(); Text(hex(UInt64(off_inpcb_inp_depend6_inp6_icmp6filt))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_inpcb_inp_depend6_inp6_chksum"); Spacer(); Text(hex(UInt64(off_inpcb_inp_depend6_inp6_chksum))).foregroundColor(.secondary).monospaced() }
+                    
+                    HStack { Text("off_socket_so_usecount"); Spacer(); Text(hex(UInt64(off_socket_so_usecount))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_socket_so_proto"); Spacer(); Text(hex(UInt64(off_socket_so_proto))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_socket_so_background_thread"); Spacer(); Text(hex(UInt64(off_socket_so_background_thread))).foregroundColor(.secondary).monospaced() }
+                    
+                    HStack { Text("off_kalloc_type_view_kt_zv_zv_name"); Spacer(); Text(hex(UInt64(off_kalloc_type_view_kt_zv_zv_name))).foregroundColor(.secondary).monospaced() }
+                    
+                    HStack { Text("off_thread_t_tro"); Spacer(); Text(hex(UInt64(off_thread_t_tro))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_thread_ro_tro_proc"); Spacer(); Text(hex(UInt64(off_thread_ro_tro_proc))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_thread_ro_tro_task"); Spacer(); Text(hex(UInt64(off_thread_ro_tro_task))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_thread_machine_upcb"); Spacer(); Text(hex(UInt64(off_thread_machine_upcb))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_thread_machine_contextdata"); Spacer(); Text(hex(UInt64(off_thread_machine_contextdata))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_thread_ctid"); Spacer(); Text(hex(UInt64(off_thread_ctid))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_thread_options"); Spacer(); Text(hex(UInt64(off_thread_options))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_thread_mutex_lck_mtx_data"); Spacer(); Text(hex(UInt64(off_thread_mutex_lck_mtx_data))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_thread_machine_kstackptr"); Spacer(); Text(hex(UInt64(off_thread_machine_kstackptr))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_thread_guard_exc_info_code"); Spacer(); Text(hex(UInt64(off_thread_guard_exc_info_code))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_thread_mach_exc_info_code"); Spacer(); Text(hex(UInt64(off_thread_mach_exc_info_code))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_thread_mach_exc_info_os_reason"); Spacer(); Text(hex(UInt64(off_thread_mach_exc_info_os_reason))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_thread_mach_exc_info_exception_type"); Spacer(); Text(hex(UInt64(off_thread_mach_exc_info_exception_type))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_thread_ast"); Spacer(); Text(hex(UInt64(off_thread_ast))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_thread_task_threads_next"); Spacer(); Text(hex(UInt64(off_thread_task_threads_next))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_thread_machine_jop_pid"); Spacer(); Text(hex(UInt64(off_thread_machine_jop_pid))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_thread_machine_rop_pid"); Spacer(); Text(hex(UInt64(off_thread_machine_rop_pid))).foregroundColor(.secondary).monospaced() }
+                    
+                    HStack { Text("off_proc_p_list_le_next"); Spacer(); Text(hex(UInt64(off_proc_p_list_le_next))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_proc_p_list_le_prev"); Spacer(); Text(hex(UInt64(off_proc_p_list_le_prev))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_proc_p_proc_ro"); Spacer(); Text(hex(UInt64(off_proc_p_proc_ro))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_proc_p_pid"); Spacer(); Text(hex(UInt64(off_proc_p_pid))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_proc_p_fd"); Spacer(); Text(hex(UInt64(off_proc_p_fd))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_proc_p_flag"); Spacer(); Text(hex(UInt64(off_proc_p_flag))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_proc_p_textvp"); Spacer(); Text(hex(UInt64(off_proc_p_textvp))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_proc_p_name"); Spacer(); Text(hex(UInt64(off_proc_p_name))).foregroundColor(.secondary).monospaced() }
+                    
+                    HStack { Text("off_proc_ro_pr_task"); Spacer(); Text(hex(UInt64(off_proc_ro_pr_task))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_proc_ro_p_ucred"); Spacer(); Text(hex(UInt64(off_proc_ro_p_ucred))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_ucred_cr_label"); Spacer(); Text(hex(UInt64(off_ucred_cr_label))).foregroundColor(.secondary).monospaced() }
+                    
+                    HStack { Text("off_task_itk_space"); Spacer(); Text(hex(UInt64(off_task_itk_space))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_task_threads_next"); Spacer(); Text(hex(UInt64(off_task_threads_next))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_task_task_exc_guard"); Spacer(); Text(hex(UInt64(off_task_task_exc_guard))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_task_map"); Spacer(); Text(hex(UInt64(off_task_map))).foregroundColor(.secondary).monospaced() }
+                    
+                    HStack { Text("off_filedesc_fd_ofiles"); Spacer(); Text(hex(UInt64(off_filedesc_fd_ofiles))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_filedesc_fd_cdir"); Spacer(); Text(hex(UInt64(off_filedesc_fd_cdir))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_fileproc_fp_glob"); Spacer(); Text(hex(UInt64(off_fileproc_fp_glob))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_fileglob_fg_data"); Spacer(); Text(hex(UInt64(off_fileglob_fg_data))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_fileglob_fg_flag"); Spacer(); Text(hex(UInt64(off_fileglob_fg_flag))).foregroundColor(.secondary).monospaced() }
+                    
+                    HStack { Text("off_vnode_v_ncchildren_tqh_first"); Spacer(); Text(hex(UInt64(off_vnode_v_ncchildren_tqh_first))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_vnode_v_nclinks_lh_first"); Spacer(); Text(hex(UInt64(off_vnode_v_nclinks_lh_first))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_vnode_v_parent"); Spacer(); Text(hex(UInt64(off_vnode_v_parent))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_vnode_v_data"); Spacer(); Text(hex(UInt64(off_vnode_v_data))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_vnode_v_name"); Spacer(); Text(hex(UInt64(off_vnode_v_name))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_vnode_v_usecount"); Spacer(); Text(hex(UInt64(off_vnode_v_usecount))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_vnode_v_iocount"); Spacer(); Text(hex(UInt64(off_vnode_v_iocount))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_vnode_v_writecount"); Spacer(); Text(hex(UInt64(off_vnode_v_writecount))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_vnode_v_flag"); Spacer(); Text(hex(UInt64(off_vnode_v_flag))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_vnode_v_mount"); Spacer(); Text(hex(UInt64(off_vnode_v_mount))).foregroundColor(.secondary).monospaced() }
+                    
+                    HStack { Text("off_mount_mnt_flag"); Spacer(); Text(hex(UInt64(off_mount_mnt_flag))).foregroundColor(.secondary).monospaced() }
+                    
+                    HStack { Text("off_namecache_nc_vp"); Spacer(); Text(hex(UInt64(off_namecache_nc_vp))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_namecache_nc_child_tqe_next"); Spacer(); Text(hex(UInt64(off_namecache_nc_child_tqe_next))).foregroundColor(.secondary).monospaced() }
+                    
+                    HStack { Text("off_arm_saved_state64_lr"); Spacer(); Text(hex(UInt64(off_arm_saved_state64_lr))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_arm_saved_state64_pc"); Spacer(); Text(hex(UInt64(off_arm_saved_state64_pc))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_arm_saved_state_uss_ss_64"); Spacer(); Text(hex(UInt64(off_arm_saved_state_uss_ss_64))).foregroundColor(.secondary).monospaced() }
+                    
+                    HStack { Text("off_ipc_space_is_table"); Spacer(); Text(hex(UInt64(off_ipc_space_is_table))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_ipc_entry_ie_object"); Spacer(); Text(hex(UInt64(off_ipc_entry_ie_object))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_ipc_port_ip_kobject"); Spacer(); Text(hex(UInt64(off_ipc_port_ip_kobject))).foregroundColor(.secondary).monospaced() }
+                    
+                    HStack { Text("off_arm_kernel_saved_state_sp"); Spacer(); Text(hex(UInt64(off_arm_kernel_saved_state_sp))).foregroundColor(.secondary).monospaced() }
+                    
+                    HStack { Text("off_vm_map_hdr"); Spacer(); Text(hex(UInt64(off_vm_map_hdr))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_vm_map_header_nentries"); Spacer(); Text(hex(UInt64(off_vm_map_header_nentries))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_vm_map_entry_links_next"); Spacer(); Text(hex(UInt64(off_vm_map_entry_links_next))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_vm_map_entry_vme_object_or_delta"); Spacer(); Text(hex(UInt64(off_vm_map_entry_vme_object_or_delta))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_vm_map_entry_vme_alias"); Spacer(); Text(hex(UInt64(off_vm_map_entry_vme_alias))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_vm_map_header_links_next"); Spacer(); Text(hex(UInt64(off_vm_map_header_links_next))).foregroundColor(.secondary).monospaced() }
+                    
+                    HStack { Text("off_vm_object_vo_un1_vou_size"); Spacer(); Text(hex(UInt64(off_vm_object_vo_un1_vou_size))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_vm_object_ref_count"); Spacer(); Text(hex(UInt64(off_vm_object_ref_count))).foregroundColor(.secondary).monospaced() }
+                    
+                    HStack { Text("off_vm_named_entry_backing_copy"); Spacer(); Text(hex(UInt64(off_vm_named_entry_backing_copy))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_vm_named_entry_size"); Spacer(); Text(hex(UInt64(off_vm_named_entry_size))).foregroundColor(.secondary).monospaced() }
+                    
+                    HStack { Text("off_label_l_perpolicy_amfi"); Spacer(); Text(hex(UInt64(off_label_l_perpolicy_amfi))).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("off_label_l_perpolicy_sandbox"); Spacer(); Text(hex(UInt64(off_label_l_perpolicy_sandbox))).foregroundColor(.secondary).monospaced() }
+                    
+                    HStack { Text("sizeof_ipc_entry"); Spacer(); Text(hex(UInt64(sizeof_ipc_entry))).foregroundColor(.secondary).monospaced() }
+                    
+                    HStack { Text("smr_base"); Spacer(); Text(hex(smr_base)).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("T1SZ_BOOT"); Spacer(); TextField("0x19", text: t1szbootbind).foregroundColor(.secondary).multilineTextAlignment(.trailing).monospaced() }
+                    HStack { Text("VM_MIN_KERNEL_ADDRESS"); Spacer(); Text(hex(VM_MIN_KERNEL_ADDRESS)).foregroundColor(.secondary).monospaced() }
+                    HStack { Text("VM_MAX_KERNEL_ADDRESS"); Spacer(); Text(hex(VM_MAX_KERNEL_ADDRESS)).foregroundColor(.secondary).monospaced() }
+                    
+                    Button {
+                        save()
+                        statusmsg = "Offsets saved!"
+                    } label: {
+                        Text("Save Offsets")
                     }
                 } header: {
                     Text("offsets")
                 } footer: {
                     Text("Manually save offsets after modifying values like t1sz_boot")
-                }
-                
-                Section {
-                    Button {
-                        saveOffsets()
-                        statusMessage = "Offsets saved!"
-                    } label: {
-                        HStack {
-                            Spacer()
-                            Text("Save Offsets")
-                            Spacer()
-                        }
-                    }
                 }
                 
                 Section {
@@ -465,10 +553,10 @@ struct SettingsView: View {
         } message: {
             Text("This will delete the downloaded kernelcache and remove saved offsets.")
         }
-        .alert("Status", isPresented: .constant(statusMessage != nil)) {
-            Button("OK") { statusMessage = nil }
+        .alert("Status", isPresented: .constant(statusmsg != nil)) {
+            Button("OK") { statusmsg = nil }
         } message: {
-            Text(statusMessage ?? "")
+            Text(statusmsg ?? "")
         }
     }
     
@@ -509,7 +597,7 @@ struct SettingsView: View {
         hasoffsets = false
     }
     
-    private func saveOffsets() {
+    private func save() {
         UserDefaults.standard.set(t1sz_boot, forKey: "lara.t1sz_boot")
         UserDefaults.standard.synchronize()
         mgr.logmsg("Saved t1sz_boot: 0x\(String(t1sz_boot, radix: 16))")

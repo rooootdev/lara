@@ -67,7 +67,11 @@ If lara doesnt work on your device, and you want to help the project, please als
 - DirtyZero 2
 - 5 App Dock
 - Status Bar Tweaks
-- Hide labels (Broken)
+- Hide labels
+- Upside Down
+- Floating Dock (Broken)
+- Grid App Switcher
+- Performance 
 
 ### coming soon:
 - JIT
