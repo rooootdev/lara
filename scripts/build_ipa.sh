@@ -12,7 +12,7 @@ xcodebuild \
   -scheme lara \
   -configuration Debug \
   -sdk iphoneos \
-  -arch arm64 \
+  -arch arm64 arm64e \
   CODE_SIGNING_ALLOWED=NO \
   CODE_SIGNING_REQUIRED=NO \
   CODE_SIGN_IDENTITY="" \
