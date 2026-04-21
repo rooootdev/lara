@@ -83,8 +83,8 @@ If lara doesnt work on your device, and you want to help the project, please als
 - downloading OTA updates does not work.
 - dirtyzero does not work.
 - ui is buggy on 17.x
-- doesnt work on ipad m1-m4?
 - .aea ota updates do not work.
+- A16+ and M-series devices dont support RemoteCall (yet)
 
 ### fixes:
 kernelcache download fix:

@@ -348,14 +348,14 @@ struct ContentView: View {
                                         NavigationLink("DirtyZero") {
                                             ZeroView(mgr: mgr)
                                         }
+                                        
+                                        NavigationLink("DarkBoard") {
+                                            DarkBoardView()
+                                        }
 
                                         if 1 == 2 {
                                             NavigationLink("Control Center") {
                                                 CCView()
-                                            }
-                                            
-                                            NavigationLink("DarkBoard") {
-                                                DarkBoardView()
                                             }
 
                                             NavigationLink("Passcode Theme") {

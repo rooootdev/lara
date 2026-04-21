@@ -448,9 +448,3 @@ struct ThemeDetailView: View {
         matchingApps = matches.sorted { $0.1.name.lowercased() < $1.1.name.lowercased() }
     }
 }
-
-struct DarkBoardView_Previews: PreviewProvider {
-    static var previews: some View {
-        DarkBoardView()
-    }
-}

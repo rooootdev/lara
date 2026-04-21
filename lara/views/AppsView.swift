@@ -26,13 +26,40 @@ struct AppsView: View {
     
     private func isbypassed(bundlepath: String) -> Bool {
         let key = "com.apple.installd.validatedByFreeProfile"
-        var value: UInt8 = 0
+
+        errno = 0
+        let size = getxattr(bundlepath, key, nil, 0, 0, 0)
+        
+        if size <= 0 {
+            let code = errno
+            let err = String(cString: strerror(code))
+            mgr.logmsg("(sbx) xattr missing or empty on: \(bundlepath) | errno=\(code) | \(err)")
+            return false
+        }
+
+        var buffer = [UInt8](repeating: 0, count: size)
         
         errno = 0
-        let size = getxattr(bundlepath, key, &value, 1, 0, 0)
+        let read = getxattr(bundlepath, key, &buffer, size, 0, 0)
         
-        guard size == 1 else { return false }
-        return value != 0
+        if read != size {
+            let code = errno
+            let err = String(cString: strerror(code))
+            mgr.logmsg("(sbx) xattr read mismatch on: \(bundlepath) | expected=\(size) got=\(read) errno=\(code) | \(err)")
+            return false
+        }
+
+        mgr.logmsg("(sbx) xattr value on \(bundlepath): \(buffer)")
+
+        let matched = (buffer == [1, 2, 3])
+        
+        if matched {
+            mgr.logmsg("(sbx) bypass marker matched on: \(bundlepath)")
+        } else {
+            mgr.logmsg("(sbx) bypass marker didnt match on: \(bundlepath)")
+        }
+
+        return matched
     }
     
     private func sbx3apbypass() {
