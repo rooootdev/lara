@@ -37,7 +37,7 @@ currently tested on iOS 17.1 - 26.0.1, up to iOS 18.7.1 only on the 18.7 series.
 
 | series | version / chip | status |
 | :--- | :--- | :--- |
-| **iOS 17** | all versions | supported |
+| **iOS 17** | all versions(unsupport 17.8 - 17.10 | supported |
 | **iOS 18** | 18.0 — 18.7.1 | supported |
 | **iOS 26.0/26.0.1** | 26.0 — 26.0.1 **only** | supported |
 | **iOS 26.1+** | 26.1+ | **patched** |
