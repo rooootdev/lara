@@ -4,7 +4,7 @@
   <br>
   <h1>LARA</h1>
 
-  <p>star this repo please :P</p>
+  <p>请关注lara的官方仓库 :P</p>
 </div>
 
 <p align="center">
@@ -28,26 +28,26 @@
   <a href="#installation">installation</a>
 </p>
 
-## support
+## 支持范围
 lara will at its absolute best only ever support versions up to iOS 26.0.1/iOS 18.7.1. the exploit was patched after those versions.
-
+lara 只在 iOS26.0.1和iOS18.7.1上处于最好的状态。这个漏洞在此之后的几个版本更新中被修复。
 currently tested on iOS 17.1 - 26.0.1, up to iOS 18.7.1 only on the 18.7 series.
+只在iOS17.1-26.0.1上进行过完整测试，在18.7系列里，只有iOS18.7.1支持
+## 对比
 
-## compatibility
-
-| series | version / chip | status |
+| 系列 | 版本 / 芯片 | 状态 |
 | :--- | :--- | :--- |
-| **iOS 17** | all versions | supported |
-| **iOS 18** | 18.0 — 18.7.1 | supported |
-| **iOS 26.0/26.0.1** | 26.0 — 26.0.1 **only** | supported |
-| **iOS 26.1+** | 26.1+ | **patched** |
-| **M-series chips** | M1, M2, M3, etc...  | **unsupported** |
+| **iOS 17** | 所有版本 | 支持 |
+| **iOS 18** | 18.0 — 18.7.1 | 支持 |
+| **iOS 26.0/26.0.1** | 只支持26.0 — 26.0.1  | 支持 |
+| **iOS 26.1+** | 26.1+ | **已修补** |
+| **M-系列芯片** | M1, M2, M3, etc...  | **不支持** |
 
 > [!CAUTION]
 > if you are on an M-series device or any iOS version higher than 26.0.1, the app will crash on launch. this isn't a bug, lara just doesnt support those devices yet.
-> 
+> 如果你拥有M系列设备搭载任意iOS版本或者系统版本高于26.0.1，那么lara会在启动时崩溃，这不是bug，只是lara不支持在这些版本上运行。
 > **ANY ISSUES THAT INVOLVE LARA NOT WORKING ON UNSUPPORTED VERSIONS WILL BE CLOSED IMMEDIATELY.**
-
+任何说lara在不支持的版本上启动崩溃的议题，都会被迅速关闭。
 If you run lara on your device, and it ends up working, please contact me on [discord](https://discord.gg/gw8PcRF3Jr) and tell me:
 1. your device
 2. your iOS version
