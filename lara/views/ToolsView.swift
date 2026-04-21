@@ -75,7 +75,13 @@ struct ToolsView: View {
             
             Section {
                 Button {
-                    mgr.respring()
+                    .overlay {
+                        if mgr.showRespringView {
+                            RespringView()
+                                .brightness(-1.0)
+                                .ignoresSafeArea()
+                        }
+                    }
                 } label: {
                     Text("Respring")
                 }

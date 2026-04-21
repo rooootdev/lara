@@ -130,7 +130,15 @@ struct EditorView: View {
             }
             .alert("Done", isPresented: .constant(alert != nil)) {
                 Button("Cancel") { alert = nil }
-                Button("Respring") { mgr.respring() }
+                Button("Respring") {
+                    .overlay {
+                        if mgr.showRespringView {
+                            RespringView()
+                                .brightness(-1.0)
+                                .ignoresSafeArea()
+                        }
+                    }
+                }
             } message: {
                 Text(alert ?? "uhh...")
             }
