@@ -129,7 +129,13 @@ struct FontPicker: View {
                         .font(.system(size: 13, design: .monospaced))
                     
                     Button("Respring") {
-                        mgr.respring()
+                        .overlay {
+                            if mgr.showRespringView {
+                                RespringView()
+                                    .brightness(-1.0)
+                                    .ignoresSafeArea()
+                            }
+                        }
                     }
                 }
             }
