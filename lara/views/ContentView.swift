@@ -446,13 +446,7 @@ struct ContentView: View {
                         }
 
                         Button("Respring") {
-                            .overlay {
-                                if mgr.showRespringView {
-                                    RespringView()
-                                        .brightness(-1.0)
-                                        .ignoresSafeArea()
-                                }
-                            }
+                            mgr.respring()
                         }
 
                         Button("Panic!") {
