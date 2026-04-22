@@ -502,34 +502,6 @@ struct SettingsView: View {
                         }
                     }
 
-                    HStack(alignment: .top) {
-                        AsyncImage(url: URL(string: "https://github.com/skadz108.png")) { image in
-                            image
-                                .resizable()
-                                .scaledToFill()
-                        } placeholder: {
-                            ProgressView()
-                        }
-                        .frame(width: 40, height: 40)
-                        .clipShape(Circle())
-                        
-                        VStack(alignment: .leading) {
-                            Text("Skadz")
-                                .font(.headline)
-                            
-                            Text("Implemented the respring script in Swift")
-                                .font(.subheadline)
-                                .foregroundColor(Color.secondary)
-                        }
-                        
-                        Spacer()
-                    }
-                    .onTapGesture {
-                        if let url = URL(string: "https://github.com/skadz108"),
-                           UIApplication.shared.canOpenURL(url) {
-                            UIApplication.shared.open(url)
-                        }
-                    }
                 } header: {
                     Text("Credits")
                 }

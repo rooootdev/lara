@@ -10,58 +10,6 @@ import Foundation
 import Darwin
 import notify
 import SafariServices
-import SwiftUI
-import UIKit
-import WebKit
-
-let respringDocument = """
-<!DOCTYPE html>
-<html>
-    <body>
-        <iframe id="frame" srcdoc="" sandbox="allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-presentation allow-scripts"></iframe>
-        <script>
-            const frame = document.getElementById('frame');
-            const respringScript = `
-                <html>
-                <body>
-                    <script>
-                        const container = document.createElement('div');
-                        container.style.cssText = 'perspective: 1px; perspective-origin: 9999999% 9999999%;';
-                        document.body.appendChild(container);
-    
-                        for (let i = 0; i < 500; i++) {
-                            let d = document.createElement('div');
-                            d.style.cssText = 'position: absolute; width: 100vw; height: 100vh; backdrop-filter: blur(100px); -webkit-backdrop-filter: blur(100px); transform: translate3d(100000px, 100000px, ' + i + 'px) rotateY(90deg);';
-                            container.appendChild(d);
-                        }
-    
-                        setInterval(() => {
-                            navigator.share({ title: 'R', text: 'R'.repeat(100000) }).catch(() => {});
-                            let x = new Uint8Array(1024 * 1024 * 10);
-                            crypto.getRandomValues(x);
-                        }, 0);
-                    <\\/script>
-                </body>
-                </html>
-            `;
-    
-            frame.srcdoc = respringScript;
-        </script>
-    </body>
-</html>
-"""
-
-struct RespringView: UIViewRepresentable {
-    func makeUIView(context: Context) -> WKWebView {
-        let webView = WKWebView()
-        WKWebpagePreferences().allowsContentJavaScript = true
-        return webView
-    }
-
-    func updateUIView(_ webView: WKWebView, context: Context) {
-        webView.loadHTMLString(respringDocument, baseURL: nil)
-    }
-}
 
 final class laramgr: ObservableObject {
     @Published var log: String = ""
@@ -79,6 +27,11 @@ final class laramgr: ObservableObject {
     @Published var testresult: String?
     #if !DISABLE_REMOTECALL
     @Published var rcrunning: Bool = false
+    @Published var eligibilitystate: Bool?
+    @Published var eu1progress: Double = 0.0
+    @Published var eu1running: Bool = false
+    @Published var eu2progress: Double = 0.0
+    @Published var eu2running: Bool = false
     #endif
     
     @Published var vfsready: Bool = false
@@ -92,6 +45,7 @@ final class laramgr: ObservableObject {
     @Published var sbxfailed: Bool = false
     @Published var sbxrunning: Bool = false
     @Published var rcready: Bool = false
+    @Published var showRespringView: Bool = false
     
     var sbProc: RemoteCall?
     
@@ -535,6 +489,38 @@ final class laramgr: ObservableObject {
                     self.rcrunning = false
                 }
                 completion?(success)
+            }
+        }
+    }
+    
+    func rcinitDaemon(serviceName: String, framework: String? = nil, process: String, migbypass: Bool = false, completion: ((RemoteCall?) -> Void)? = nil) {
+        guard dsready, let sbProc else {
+            completion?(nil)
+            return
+        }
+        
+        rcrunning = true
+        logmsg("initializing remote call on \(process)...")
+        
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            if process.withCString({ proc_find_by_name($0) == 0 }) {
+                wake_up_daemon(sbProc, serviceName, framework)
+                sleep(1) // give the daemon some time to start up
+            }
+            
+            let proc = RemoteCall(process: process, useMigFilterBypass: migbypass)
+            completion?(proc)
+            
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                let success = proc != nil
+                if success {
+                    self.logmsg("remote call initialized on \(process)")
+                    self.rcrunning = false
+                } else {
+                    self.logmsg("remote call init failed on \(process)")
+                    self.rcrunning = false
+                }
             }
         }
     }

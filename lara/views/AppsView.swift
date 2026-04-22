@@ -101,7 +101,6 @@ struct AppsView: View {
                     guard access(mp, F_OK) == 0 else { continue }
 
                     let testkey = "com.apple.installd.validatedByFreeProfile"
-                    var value: [UInt8] = [1, 2, 3]
                     
                     let success = mgr.apfsown(path: bundlepath, uid: 501, gid: 501)
                     if !success {
@@ -111,7 +110,7 @@ struct AppsView: View {
                     }
 
                     errno = 0
-                    let rc = setxattr(bundlepath, testkey, &value, value.count, 0, 0)
+                    let rc = removexattr(bundlepath, testkey, 0)
                     if rc == 0 {
                         mgr.logmsg("(sbx) set xattr on: \(bundlepath)")
                         processed += 1
