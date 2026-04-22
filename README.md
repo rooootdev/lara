@@ -41,10 +41,10 @@ currently tested on iOS 17.1 - 26.0.1, up to iOS 18.7.1 only on the 18.7 series.
 | **iOS 18** | 18.0 — 18.7.1 | supported |
 | **iOS 26.0/26.0.1** | 26.0 — 26.0.1 **only** | supported |
 | **iOS 26.1+** | 26.1+ | **patched** |
-| **M-series chips** | M1, M2, M3, etc...  | **unsupported** |
+| **M-series chips** | M1 - M4  | partially supported. YMMV |
 
 > [!CAUTION]
-> if you are on an M-series device or any iOS version higher than 26.0.1, the app will crash on launch. this isn't a bug, lara just doesnt support those devices yet.
+> if you are on an M-series device, go to lara settings, scroll down set t1sz_boot to `0x11`. if you are on any iOS version higher than 26.0.1 the app will crash on launch. this isn't a bug, lara just doesnt support those devices.
 > 
 > **ISSUES THAT INVOLVE LARA NOT WORKING ON UNSUPPORTED VERSIONS WILL BE CLOSED IMMEDIATELY.**<br>
 > **Issues related to lara not working on versions that the exploit DOES technically support will be closed and added to the known issues section**
@@ -71,10 +71,10 @@ If lara doesnt work on your device, and you want to help the project, please als
 - Upside Down
 - Floating Dock (Broken)
 - Grid App Switcher
-- Performance 
+- Performance
+- JIT
 
 ### coming soon:
-- JIT
 - App Decrypt
 
 ## known issues:
@@ -85,6 +85,7 @@ If lara doesnt work on your device, and you want to help the project, please als
 - ui is buggy on 17.x
 - .aea ota updates do not work.
 - A16+ and M-series devices dont support RemoteCall (yet)
+- apps don't detect JIT enabled however they are enabled.
 
 ### fixes:
 kernelcache download fix:
@@ -120,5 +121,5 @@ respringing is needed to apply springboard changes such as font changes.
 - AlfieCG for libgrabkernel2
 - Everyone who contributed!
 
-<br><br><br><br>
+<br>
 <div align="center">a beautiful kexploit ♥️</div>
