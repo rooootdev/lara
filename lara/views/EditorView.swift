@@ -177,14 +177,7 @@ struct EditorView: View {
             .alert("Done", isPresented: .constant(alert != nil)) {
                 Button("Cancel") { alert = nil }
                 Button("Respring") {
-                    mgr.showRespringView = true
-                }
-                .fullScreenCover(isPresented: $mgr.showRespringView) {
-                    if mgr.showRespringView {
-                        RespringView()
-                            .brightness(-1.0)
-                            .ignoresSafeArea()
-                    }
+                    mgr.respring()
                 }
             } message: {
                 Text(alert ?? "uhh...")

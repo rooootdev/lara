@@ -174,20 +174,27 @@ struct JitView: View {
 	        globallogger.log("(jit) enabling for \(bundleID)...")
 
 	        let runEnable: () -> Void = {
-	            DispatchQueue.global(qos: .userInitiated).async {
-	                let err: Int32 = bundleID.withCString { cStr in
-                        enable_jit(mgr.sbProc, cStr)
-	                }
-	                DispatchQueue.main.async {
-	                    if err == 0 {
-	                        globallogger.log("(jit) enabled for \(bundleID)")
-	                    } else {
-	                        globallogger.log("(jit) failed for \(bundleID): \(err)")
-	                    }
-	                    enablingBundleID = nil
-	                }
-	            }
-	        }
+				guard let sbProc = mgr.sbProc else {
+					globallogger.log("(jit) error: sbProc is nil")
+					DispatchQueue.main.async { enablingBundleID = nil }
+					return
+				}
+
+				DispatchQueue.global(qos: .userInitiated).async {
+					let err: Int32 = bundleID.withCString { (cStr: UnsafePointer<Int8>) -> Int32 in
+						return enable_jit(sbProc, cStr)
+					}
+
+					DispatchQueue.main.async {
+						if err == 0 {
+							globallogger.log("(jit) enabled for \(bundleID)")
+						} else {
+							globallogger.log("(jit) error enabling for \(bundleID)!")
+						}
+						enablingBundleID = nil
+					}
+				}
+			}
 
 	        if mgr.rcrunning {
 	            runEnable()
