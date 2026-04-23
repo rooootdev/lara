@@ -225,16 +225,6 @@ struct ContentView: View {
                                         NavigationLink("Unblacklist (Broken?)") {
                                             WhitelistView()
                                         }
-
-                                        if 1 == 2 {
-                                            NavigationLink("MobileGestalt") {
-                                                EditorView()
-                                            }
-
-                                            NavigationLink("Passcode Theme") {
-                                                PasscodeView(mgr: mgr)
-                                            }
-                                        }
                                     }
                                     .navigationTitle(Text("Tweaks"))
                                 }
@@ -351,20 +341,6 @@ struct ContentView: View {
                                         
                                         NavigationLink("DarkBoard") {
                                             DarkBoardView()
-                                        }
-
-                                        if 1 == 2 {
-                                            NavigationLink("Control Center") {
-                                                CCView()
-                                            }
-
-                                            NavigationLink("Passcode Theme") {
-                                                PasscodeView(mgr: mgr)
-                                            }
-
-                                            NavigationLink("3 App Bypass") {
-                                                AppsView(mgr: mgr)
-                                            }
                                         }
                                     }
                                     .navigationTitle(Text("Tweaks"))
