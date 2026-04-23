@@ -509,8 +509,8 @@ final class laramgr: ObservableObject {
             }
             
             let proc = RemoteCall(process: process, useMigFilterBypass: migbypass)
-            completion?(proc)
-            
+            DispatchQueue.main.async { completion?(proc) }
+
             DispatchQueue.main.async {
                 guard let self = self else { return }
                 let success = proc != nil
