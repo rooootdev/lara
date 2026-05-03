@@ -1,95 +1,71 @@
-name: build
+name: Build LARA with TrollStore
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, master ]
   pull_request:
+    branches: [ main, master ]
   workflow_dispatch:
-
-permissions:
-  contents: write
 
 jobs:
   build:
-    runs-on: macos-26
+    runs-on: macos-latest
 
     steps:
-      - name: checkout
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: setup xcode
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: latest-stable
+    - name: Setup Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: latest-stable
 
-      - name: show xcode version
-        run: xcodebuild -version
+    - name: Show Xcode version
+      run: xcodebuild -version
 
-      - name: install ldid
-        run: brew install ldid
+    - name: List project structure
+      run: |
+        echo "=== Project Structure ==="
+        ls -la
+        echo "=== Checking new files ==="
+        ls -la lara/kexploit/pe/amfi.* || echo "⚠️ AMFI files not found"
+        ls -la lara/kexploit/pe/installd_patch.* || echo "⚠️ installd_patch files not found"
+        ls -la lara/views/TrollStoreInstallerView.swift || echo "⚠️ TrollStoreInstallerView not found"
 
-      - name: build
-        run: |
-          chmod +x scripts/build_ipa.sh
-          ./scripts/build_ipa.sh
+    - name: Check if files are in Xcode project
+      run: |
+        echo "=== Checking Xcode project ==="
+        grep -c "amfi.m" lara.xcodeproj/project.pbxproj || echo "⚠️ amfi.m NOT in project"
+        grep -c "installd_patch.m" lara.xcodeproj/project.pbxproj || echo "⚠️ installd_patch.m NOT in project"
+        grep -c "TrollStoreInstallerView.swift" lara.xcodeproj/project.pbxproj || echo "⚠️ TrollStoreInstallerView NOT in project"
 
-      - name: upload build artifact
-        if: github.event_name == 'pull_request'
-        uses: actions/upload-artifact@v4
-        with:
-          name: lara-ipa
-          path: |
-            build/lara.ipa
-            build/xcodebuild.log
+    - name: Build project
+      run: |
+        xcodebuild clean build \
+          -project lara.xcodeproj \
+          -scheme lara \
+          -configuration Release \
+          -destination 'generic/platform=iOS' \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO
 
-      - name: upload ipa for release
-        if: github.event_name != 'pull_request'
-        uses: actions/upload-artifact@v4
-        with:
-          name: release-ipa
-          path: build/lara.ipa
+    - name: Archive project
+      run: |
+        xcodebuild archive \
+          -project lara.xcodeproj \
+          -scheme lara \
+          -configuration Release \
+          -archivePath build/lara.xcarchive \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO
 
-  release:
-    if: github.event_name != 'pull_request'
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: download all ipas
-        uses: actions/download-artifact@v4
-        with:
-          pattern: release-ipa*
-          merge-multiple: true
-          path: build/
-
-      - name: create release tag
-        run: |
-          TAG="nightly_$(date +'%Y%m%d%H%M%S')-$(git rev-parse --short HEAD)"
-          echo "TAG=$TAG" >> $GITHUB_ENV
-
-      - name: get last 12h commits
-        run: |
-          COMMITS=$(git log --since="12 hours ago" --pretty=format:"- %h %s (%an)")
-          if [ -z "$COMMITS" ]; then
-            COMMITS="no commits in the last 12 hours"
-          fi
-          echo "COMMITS<<EOF" >> $GITHUB_ENV
-          echo "$COMMITS" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-
-      - name: create nightly release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ env.TAG }}
-          name: nightly build (${{ env.TAG }})
-          body: ${{ env.COMMITS }}
-          prerelease: true
-          files: |
-            build/lara.ipa
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      if: success()
+      with:
+        name: lara-trollstore-build
+        path: |
+          build/
+        retention-days: 7

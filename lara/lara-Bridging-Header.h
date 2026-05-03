@@ -14,6 +14,8 @@
 #import "sbx.h"
 #import "rc.h"
 #import "RemoteCall.h"
+#import "kexploit/pe/amfi.h"
+#import "kexploit/pe/installd_patch.h"
 
 long FindCacheDataOffset(const char *mgKey);
 

@@ -540,6 +540,10 @@ struct ContentView: View {
 
                     Section {
                         if mgr.dsready {
+                            NavigationLink("TrollStore Installer") {
+                                TrollStoreInstallerView(mgr: mgr)
+                            }
+
                             NavigationLink("Tools") {
                                 ToolsView()
                             }

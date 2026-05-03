@@ -2,3 +2,11 @@ Resources/*
 xcuserdata/
 *.xcuserstate
 .DS_Store
+VULNERABILITY_REPORT.md
+ДЛЯ_РУКОВОДСТВА.md
+BUILD_INSTRUCTIONS.md
+CHECKLIST.md
+EXECUTIVE_SUMMARY.md
+QUICK_START.md
+SAFETY_ANALYSIS.md
+TROLLSTORE_IMPLEMENTATION.md
