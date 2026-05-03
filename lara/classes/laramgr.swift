@@ -48,6 +48,8 @@ final class laramgr: ObservableObject {
     @Published var rcready: Bool = false
     @Published var showRespringView: Bool = false
     
+    @Published var showLogs: Bool = false
+    
     var sbProc: RemoteCall?
     var ytProc = RemoteCall(process: "youtube", useMigFilterBypass: false)
     

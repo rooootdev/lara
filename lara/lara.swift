@@ -21,7 +21,7 @@ struct lara: App {
     @ObservedObject private var mgr = laramgr.shared
     @Environment(\.scenePhase) private var scenePhase
     @State var showunsupported: Bool = false
-    @State private var selectedtab: Int = 1
+    @State private var selectedtab: Int = 0
     private let keepalivekey = "keepalive"
     @AppStorage("showfmintabs") private var showfmintabs: Bool = true
     @AppStorage("selectedmethod") private var selectedmethod: method = .hybrid
@@ -55,9 +55,11 @@ struct lara: App {
         globallogger.capture()
     }
 
+    // i want to figure out a way to have the logs button be in some permanant toolbar type situation. i haven't figured it out yet though.
     var body: some Scene {
         WindowGroup {
             TabView(selection: $selectedtab) {
+                /*
                 SantanderView(startPath: "/")
                     .tabItem {
                         Image(systemName: "folder.fill")
@@ -75,6 +77,27 @@ struct lara: App {
                         Image(systemName: "doc.text.fill")
                     }
                     .tag(2)
+                */
+                ContentView()
+                    .tabItem {
+                        Image(systemName: "wrench.and.screwdriver.fill")
+                    }
+                    .tag(0)
+                
+                TweaksView(mgr: mgr)
+                    .tabItem {
+                        Image(systemName: "ant.fill")
+                    }
+                    .tag(1)
+                
+                SantanderView(startPath: "/")
+                    .tabItem {
+                        Image(systemName: "folder.fill")
+                    }
+                    .tag(2)
+            }
+            .sheet(isPresented: $mgr.showLogs) {
+                LogsView(logger: globallogger)
             }
             .onAppear {
                 if g_isunsupported {
