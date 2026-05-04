@@ -252,19 +252,17 @@ struct TrollStoreInstallerView: View {
     }
 
     func saveLogToFile(_ message: String) {
-        // CRITICAL: Use low-level I/O with fsync() for immediate disk write
-        DispatchQueue.global(qos: .userInitiated).async {
-            let path = self.logFilePath.path
-            let fd = open(path, O_WRONLY | O_CREAT | O_APPEND, 0o644)
-            if fd >= 0 {
-                if let data = message.data(using: .utf8) {
-                    data.withUnsafeBytes { ptr in
-                        write(fd, ptr.baseAddress, data.count)
-                    }
-                    fsync(fd)  // Force write to disk NOW
+        // CRITICAL: SYNCHRONOUS write with fsync() - NO async dispatch!
+        let path = self.logFilePath.path
+        let fd = open(path, O_WRONLY | O_CREAT | O_APPEND, 0o644)
+        if fd >= 0 {
+            if let data = message.data(using: .utf8) {
+                data.withUnsafeBytes { ptr in
+                    write(fd, ptr.baseAddress, data.count)
                 }
-                close(fd)
+                fsync(fd)  // Force write to disk NOW
             }
+            close(fd)
         }
     }
 
