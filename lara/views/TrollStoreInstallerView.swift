@@ -341,27 +341,21 @@ struct TrollStoreInstallerView: View {
             progress = 0.3
             addLog("Attempting AMFI bypass...")
 
-            // Check device - skip AMFI bypass on A12+ to prevent kernel panic
-            let deviceModel = UIDevice.current.model
-            addLog("Device: \(deviceModel)")
+            // Always attempt AMFI bypass - it's needed for RemoteCall
+            // The amfi.m code will handle PPL protection safely
+            let amfiResult = amfi_bypass(ds_get_our_proc())
 
-            // A12+ devices (iPhone XS and newer) have PPL protection
-            // Attempting AMFI bypass causes kernel panic
-            // Skip it and rely on installd patching only
-            if #available(iOS 17.0, *) {
-                addLog("⚠ Skipping AMFI bypass on iOS 17+ (PPL protected)")
-                addLog("Will rely on installd patching only")
+            if amfiResult == 0 {
+                addLog("✓ AMFI bypass successful")
+            } else if amfiResult == 1 {
+                addLog("⚠ AMFI bypass partial (may still work)")
+            } else if amfiResult == -4 {
+                addLog("⚠ AMFI bypass skipped (PPL protected)")
+                addLog("This is expected on A12+ devices")
+                addLog("RemoteCall should still work")
             } else {
-                let amfiResult = amfi_bypass(ds_get_our_proc())
-
-                if amfiResult == 0 {
-                    addLog("✓ AMFI bypass successful")
-                } else if amfiResult == 1 {
-                    addLog("⚠ AMFI bypass partial (may still work)")
-                } else {
-                    addLog("✗ AMFI bypass failed (code: \(amfiResult))")
-                    addLog("Continuing anyway - installd patch may be sufficient...")
-                }
+                addLog("✗ AMFI bypass failed (code: \(amfiResult))")
+                addLog("Continuing anyway - may still work...")
             }
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
