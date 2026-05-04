@@ -317,6 +317,23 @@ struct TrollStoreInstallerView: View {
         progress = 0.0
         detailedLog = ""
 
+        // Setup logging callbacks for C functions
+        amfi_setlogcallback { messageCStr in
+            guard let messageCStr else { return }
+            let message = String(cString: messageCStr)
+            DispatchQueue.main.async {
+                self.addLog(message)
+            }
+        }
+
+        installd_setlogcallback { messageCStr in
+            guard let messageCStr else { return }
+            let message = String(cString: messageCStr)
+            DispatchQueue.main.async {
+                self.addLog(message)
+            }
+        }
+
         // Add separator for new session
         saveLogToFile("\n\n========================================\n")
         addLog("=== TrollStore Installation Started ===")
@@ -378,8 +395,8 @@ struct TrollStoreInstallerView: View {
                         progress = 0.7
                         addLog("Patching installd for TrollStore...")
 
-                        if mgr.rcready {
-                            let patchResult = installd_patch_for_trollstore(mgr.sbProc)
+                        if mgr.rcready, let sbProc = mgr.sbProc {
+                            let patchResult = installd_patch_for_trollstore(sbProc)
                             if patchResult == 0 {
                                 addLog("✓ installd patched successfully")
                             } else {
