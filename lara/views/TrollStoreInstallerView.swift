@@ -19,6 +19,13 @@ struct TrollStoreInstallerView: View {
     @State private var errorMessage: String = ""
     @State private var detailedLog: String = ""
     @State private var showLog: Bool = false
+    @State private var previousLogs: [String] = []
+    @State private var showPreviousLogs: Bool = false
+
+    private let logFilePath: URL = {
+        let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        return docs.appendingPathComponent("trollstore_install_logs.txt")
+    }()
 
     var body: some View {
         NavigationStack {
@@ -137,6 +144,19 @@ struct TrollStoreInstallerView: View {
                     }
                     .padding(.horizontal)
 
+                    // Show previous logs button
+                    Button(action: {
+                        loadPreviousLogs()
+                        showPreviousLogs.toggle()
+                    }) {
+                        HStack {
+                            Image(systemName: "clock.arrow.circlepath")
+                            Text("Show Previous Logs")
+                        }
+                        .font(.subheadline)
+                    }
+                    .padding(.horizontal)
+
                     if showLog {
                         ScrollView {
                             Text(detailedLog)
@@ -145,6 +165,34 @@ struct TrollStoreInstallerView: View {
                                 .padding()
                         }
                         .frame(height: 200)
+                        .background(Color.black.opacity(0.05))
+                        .cornerRadius(8)
+                        .padding(.horizontal)
+                    }
+
+                    if showPreviousLogs {
+                        ScrollView {
+                            VStack(alignment: .leading, spacing: 10) {
+                                if previousLogs.isEmpty {
+                                    Text("No previous logs found")
+                                        .foregroundColor(.secondary)
+                                } else {
+                                    ForEach(Array(previousLogs.enumerated()), id: \.offset) { index, log in
+                                        VStack(alignment: .leading, spacing: 5) {
+                                            Text("Attempt #\(previousLogs.count - index)")
+                                                .font(.caption)
+                                                .fontWeight(.bold)
+                                            Text(log)
+                                                .font(.system(.caption2, design: .monospaced))
+                                            Divider()
+                                        }
+                                    }
+                                }
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding()
+                        }
+                        .frame(height: 250)
                         .background(Color.black.opacity(0.05))
                         .cornerRadius(8)
                         .padding(.horizontal)
@@ -190,8 +238,41 @@ struct TrollStoreInstallerView: View {
 
     func addLog(_ message: String) {
         let timestamp = Date().formatted(date: .omitted, time: .standard)
-        detailedLog += "[\(timestamp)] \(message)\n"
+        let logLine = "[\(timestamp)] \(message)\n"
+        detailedLog += logLine
         mgr.logmsg(message)
+
+        // Save to file immediately
+        saveLogToFile(logLine)
+    }
+
+    func saveLogToFile(_ message: String) {
+        do {
+            if FileManager.default.fileExists(atPath: logFilePath.path) {
+                let fileHandle = try FileHandle(forWritingTo: logFilePath)
+                fileHandle.seekToEndOfFile()
+                if let data = message.data(using: .utf8) {
+                    fileHandle.write(data)
+                }
+                fileHandle.closeFile()
+            } else {
+                try message.write(to: logFilePath, atomically: true, encoding: .utf8)
+            }
+        } catch {
+            print("Failed to save log: \(error)")
+        }
+    }
+
+    func loadPreviousLogs() {
+        do {
+            if FileManager.default.fileExists(atPath: logFilePath.path) {
+                let content = try String(contentsOf: logFilePath, encoding: .utf8)
+                let sessions = content.components(separatedBy: "=== TrollStore Installation Started ===")
+                previousLogs = sessions.filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+            }
+        } catch {
+            print("Failed to load previous logs: \(error)")
+        }
     }
 
     func runDarkSword() {
@@ -224,7 +305,12 @@ struct TrollStoreInstallerView: View {
         progress = 0.0
         detailedLog = ""
 
+        // Add separator for new session
+        saveLogToFile("\n\n========================================\n")
         addLog("=== TrollStore Installation Started ===")
+        addLog("Device: \(UIDevice.current.model)")
+        addLog("iOS: \(UIDevice.current.systemVersion)")
+        addLog("Time: \(Date().formatted())")
 
         // Step 1: Verify DarkSword
         status = "Step 1/5: Verifying kernel exploit..."
