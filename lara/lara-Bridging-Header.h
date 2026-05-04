@@ -16,6 +16,7 @@
 #import "RemoteCall.h"
 #import "kexploit/pe/amfi.h"
 #import "kexploit/pe/installd_patch.h"
+#import "kexploit/pe/trust_cache_inject.h"
 
 long FindCacheDataOffset(const char *mgKey);
 
