@@ -317,23 +317,6 @@ struct TrollStoreInstallerView: View {
         progress = 0.0
         detailedLog = ""
 
-        // Setup logging callbacks for C functions
-        amfi_setlogcallback { messageCStr in
-            guard let messageCStr else { return }
-            let message = String(cString: messageCStr)
-            DispatchQueue.main.async {
-                self.addLog(message)
-            }
-        }
-
-        installd_setlogcallback { messageCStr in
-            guard let messageCStr else { return }
-            let message = String(cString: messageCStr)
-            DispatchQueue.main.async {
-                self.addLog(message)
-            }
-        }
-
         // Add separator for new session
         saveLogToFile("\n\n========================================\n")
         addLog("=== TrollStore Installation Started ===")
