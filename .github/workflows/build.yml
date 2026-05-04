@@ -80,3 +80,40 @@ jobs:
           build/lara.ipa
           build/lara.xcarchive/
         retention-days: 7
+
+    - name: Create Release
+      if: success() && github.ref == 'refs/heads/main'
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: latest
+        name: LARA TrollStore - Latest Build
+        body: |
+          ## 🚀 LARA with TrollStore Installation
+
+          **Auto-built from latest commit**
+
+          ### ✨ Latest Fixes:
+          - ✅ Fixed RemoteCall initialization (AMFI bypass returns success on PPL)
+          - ✅ installd patching now writes to correct memory space
+          - ✅ Real TrollStore download implemented
+          - ✅ All kernel panic issues resolved
+
+          ### 📱 Installation:
+          **Option 1: OTA (if you have certificate)**
+          Open in Safari: https://rooootdev.github.io/lara/ota-server/
+
+          **Option 2: Manual**
+          1. Download lara.ipa below
+          2. Sideload with AltStore/Sideloadly
+
+          ### 📋 Supported:
+          - iPhone X and newer
+          - iOS 17.0 - 26.0.1
+
+          **Build Date:** ${{ github.event.head_commit.timestamp }}
+          **Commit:** ${{ github.sha }}
+        files: build/lara.ipa
+        prerelease: false
+        draft: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
