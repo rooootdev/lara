@@ -9,9 +9,6 @@
 /* Begin PBXBuildFile section */
 		9F4A1D2F3C4E567890123456 /* lara/lib/libxpf.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9F4A1D2E3C4E567890123456 /* lara/lib/libxpf.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9F4A1D423C4E567890123456 /* lara/lib/libgrabkernel2.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9F4A1D413C4E567890123456 /* lara/lib/libgrabkernel2.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		21C0A5B6F6F04175A9E37992 /* amfi.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C985189B48B450E83624DF0 /* lara/kexploit/pe/amfi.m */; };
-		42C35FB7CC64430BA7B2CB9A /* installd_patch.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D8D7B33859648E291AE4689 /* lara/kexploit/pe/installd_patch.m */; };
-		D4F826E29462424385623A9D /* TrollStoreInstallerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75A09CE8EBEC42F38F6EA6D9 /* lara/views/TrollStoreInstallerView.swift */; };
 		/* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -45,11 +42,6 @@
 		9F4A1D413C4E567890123456 /* lara/lib/libgrabkernel2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = lara/lib/libgrabkernel2.dylib; sourceTree = "<group>"; };
 		CC1C8B392F71DF9C00206982 /* lara.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = lara.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC6842DF2F8311C300B08EB0 /* libSystem.B.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libSystem.B.tbd; path = usr/lib/libSystem.B.tbd; sourceTree = SDKROOT; };
-		1C985189B48B450E83624DF0 /* lara/kexploit/pe/amfi.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = lara/kexploit/pe/amfi.m; sourceTree = "<group>"; };
-		81A80406D38D45F193E1D12E /* lara/kexploit/pe/amfi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = lara/kexploit/pe/amfi.h; sourceTree = "<group>"; };
-		7D8D7B33859648E291AE4689 /* lara/kexploit/pe/installd_patch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = lara/kexploit/pe/installd_patch.m; sourceTree = "<group>"; };
-		F0D07F764B584CA885291E3E /* lara/kexploit/pe/installd_patch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = lara/kexploit/pe/installd_patch.h; sourceTree = "<group>"; };
-		75A09CE8EBEC42F38F6EA6D9 /* lara/views/TrollStoreInstallerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = lara/views/TrollStoreInstallerView.swift; sourceTree = "<group>"; };
 		/* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -220,10 +212,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			
-				21C0A5B6F6F04175A9E37992 /* amfi.m in Sources */,
-				42C35FB7CC64430BA7B2CB9A /* installd_patch.m in Sources */,
-				D4F826E29462424385623A9D /* TrollStoreInstallerView.swift in Sources */,);
+			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
