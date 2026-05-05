@@ -55,7 +55,34 @@ final class laramgr: ObservableObject {
     static let fontpath = "/System/Library/Fonts/Core/SFUI.ttf"
     static let italicfontpath = "/System/Library/Fonts/Core/SFUIItalic.ttf"
     static let monofontpath = "/System/Library/Fonts/Core/SFUIMono.ttf"
-    private init() {}
+    private init() {
+        // Auto-load default kernelcache if not exists
+        ensureDefaultKernelcache()
+    }
+
+    private func ensureDefaultKernelcache() {
+        let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let kernelcachePath = documentsPath.appendingPathComponent("kernelcache")
+
+        // Check if kernelcache already exists
+        if FileManager.default.fileExists(atPath: kernelcachePath.path) {
+            logmsg("kernelcache already exists")
+            return
+        }
+
+        // Copy default kernelcache from bundle
+        guard let bundlePath = Bundle.main.path(forResource: "kernelcache", ofType: "default", inDirectory: "Resources") else {
+            logmsg("⚠ default kernelcache not found in bundle")
+            return
+        }
+
+        do {
+            try FileManager.default.copyItem(atPath: bundlePath, toPath: kernelcachePath.path)
+            logmsg("✓ copied default kernelcache for iOS 17.6.1 (iPhone 11 Pro)")
+        } catch {
+            logmsg("✗ failed to copy default kernelcache: \(error.localizedDescription)")
+        }
+    }
 
     struct AppInfo {
         let executable: String
