@@ -482,7 +482,7 @@ struct TrollStoreInstallerView: View {
         let extractCmd = "/usr/bin/tar -xf '\(tarPath)' -C '\(tempDir)'"
         addLog("Running: \(extractCmd)")
 
-        let pipe = popen(extractCmd, "r")
+        let pipe = popen(extractCmd.cString(using: .utf8), "r")
         if let pipe = pipe {
             var output = ""
             var buffer = [CChar](repeating: 0, count: 256)
