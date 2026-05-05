@@ -18,3 +18,4 @@ ipsw/21G101__iPhone12,3_5/kernelcache.release.iPhone12,3_5
 ipsw/iPhone12,3,iPhone12,5_17.6.1_21G101_Restore.ipsw
 .gitignore
 lara/Resources/kernelcache.default
+logs/
