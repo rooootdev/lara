@@ -1,0 +1,10 @@
+[2026-05-04 23:44:16.640] proc=0xffffffe02fad6f90 proc_ro_raw=0xffffffde17bde300 proc_ro=0xffffffde17bde300
+[2026-05-04 23:44:16.651] scanning proc_ro for ucred...
+[2026-05-04 23:44:16.652]   proc_ro+0x10: raw=0x175 smr=0x175 pac=0x175
+[2026-05-04 23:44:16.653]   proc_ro+0x18: raw=0x2200230500000420 smr=0x500000420 pac=0x500000420
+[2026-05-04 23:44:16.654]   proc_ro+0x20: raw=0xffffffde64829d20 smr=0xffffffde64829d20 pac=0xffffffde64829d20
+[2026-05-04 23:44:16.655] found ucred at proc_ro+0x20 (SMR) = 0xffffffde64829d20
+[2026-05-04 23:44:16.656] ucred=0xffffffde64829d20 label=0xffffffde17ba7800 sandbox=0xffffffde17d03608 ext_set=0xffffffe116f05240
+[2026-05-04 23:44:16.657] patched 5 extensions
+[2026-05-04 23:44:16.659] filled 11 empty hash slots
+[2026-05-04 23:44:16.660] escaped!

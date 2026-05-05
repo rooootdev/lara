@@ -337,37 +337,23 @@ struct TrollStoreInstallerView: View {
         addLog("CRITICAL: Waiting 0.5s before AMFI bypass...")
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            // Step 2: AMFI Bypass
-            status = "Step 2/3: Bypassing AMFI..."
+            // Step 2: Trust Cache Injection (SAFER than AMFI bypass)
+            status = "Step 2/3: Injecting Trust Cache..."
             progress = 0.4
-            addLog("=== STEP 2: AMFI BYPASS ===")
-            addLog("CRITICAL: About to call amfi_bypass()")
-            addLog("CRITICAL: Getting our_proc...")
+            addLog("=== STEP 2: TRUST CACHE INJECTION ===")
+            addLog("Note: Using trust cache injection instead of AMFI bypass")
+            addLog("This is more stable and doesn't cause kernel panic")
 
-            let ourProc = ds_get_our_proc()
-            addLog("CRITICAL: our_proc = 0x\(String(format: "%llx", ourProc))")
+            // Initialize trust cache injection
+            addLog("Initializing trust cache injection...")
+            let tcInitResult = trust_cache_inject_init()
 
-            // Force log flush before amfi_bypass
-            sleep(1)
-
-            addLog("CRITICAL: Calling amfi_bypass() NOW...")
-            addLog("CRITICAL: If you see this but no amfi_debug.log, crash is IN amfi_bypass()")
-
-            // Force another flush
-            sleep(1)
-
-            let amfiResult = amfi_bypass(ourProc)
-
-            addLog("CRITICAL: amfi_bypass() returned: \(amfiResult)")
-
-            if amfiResult == 0 {
-                addLog("✓ AMFI bypass successful")
+            if tcInitResult != 0 {
+                addLog("⚠ Trust cache init returned: \(tcInitResult)")
+                addLog("Continuing anyway - may still work")
             } else {
-                addLog("⚠ AMFI bypass returned code: \(amfiResult)")
-                addLog("Continuing anyway - TrollStore may still work")
+                addLog("✓ Trust cache injection initialized")
             }
-
-            addLog("CRITICAL: AMFI bypass completed without crash")
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 // Step 3: Download and install TrollStore
@@ -375,7 +361,7 @@ struct TrollStoreInstallerView: View {
                 progress = 0.7
                 addLog("=== STEP 3: TROLLSTORE DOWNLOAD ===")
                 addLog("Downloading TrollStore IPA...")
-                addLog("Note: TrollStore uses CoreTrust bug, no installd patching needed")
+                addLog("Will inject CDHash into trust cache after download")
 
                 downloadAndInstallTrollStore()
             }
@@ -428,13 +414,26 @@ struct TrollStoreInstallerView: View {
 
                     self.addLog("✓ TrollStore saved to: \(destinationURL.path)")
                     self.addLog("")
-                    self.addLog("=== Installation Complete ===")
-                    self.addLog("")
-                    self.addLog("Next steps:")
-                    self.addLog("1. Open Files app → On My iPhone → lara")
-                    self.addLog("2. Tap TrollStore.ipa to install")
-                    self.addLog("3. The patches are active - installation should succeed")
-                    self.addLog("4. After reboot, run LARA again for new installations")
+                    self.addLog("=== Extracting TrollStore Binary ===")
+
+                    // Extract TrollStore binary from IPA
+                    let result = trust_cache_inject_binary(destinationURL.path)
+
+                    if result == 0 {
+                        self.addLog("✓ TrollStore CDHash injected into trust cache!")
+                        self.addLog("")
+                        self.addLog("=== Installation Complete ===")
+                        self.addLog("")
+                        self.addLog("Next steps:")
+                        self.addLog("1. Open Files app → On My iPhone → lara")
+                        self.addLog("2. Tap TrollStore.ipa to install")
+                        self.addLog("3. Trust cache injection is active - should work!")
+                        self.addLog("4. Check trust_cache_debug.log for details")
+                    } else {
+                        self.addLog("⚠ Trust cache injection failed: \(result)")
+                        self.addLog("You can still try manual installation")
+                        self.addLog("Check trust_cache_debug.log for error details")
+                    }
 
                     self.progress = 1.0
                     self.status = "✓ Installation complete!"
