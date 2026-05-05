@@ -393,7 +393,7 @@ struct TrollStoreInstallerView: View {
         addLog("Running: curl -L -o PersistenceHelper [URL]")
 
         var output = ""
-        if let pipe = popen(curlCmd, "r") {
+        if let pipe = curlCmd.withCString({ popen($0, "r") }) {
             var buffer = [CChar](repeating: 0, count: 256)
             while fgets(&buffer, 256, pipe) != nil {
                 let line = String(cString: buffer)
