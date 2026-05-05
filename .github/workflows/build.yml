@@ -33,7 +33,7 @@ jobs:
           chmod +x scripts/build_ipa.sh
           ./scripts/build_ipa.sh
 
-      - name: upload build artifact
+      - name: upload build artifact (PR only)
         if: github.event_name == 'pull_request'
         uses: actions/upload-artifact@v4
         with:
@@ -49,6 +49,7 @@ jobs:
           name: release-ipa
           path: build/lara.ipa
 
+
   release:
     if: github.event_name != 'pull_request'
     needs: build
@@ -60,17 +61,17 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: download all ipas
+      - name: download ipa
         uses: actions/download-artifact@v4
         with:
-          pattern: release-ipa*
-          merge-multiple: true
+          name: release-ipa
           path: build/
 
-      - name: create release tag
+      - name: set metadata
         run: |
-          TAG="nightly_$(date +'%Y%m%d%H%M%S')-$(git rev-parse --short HEAD)"
-          echo "TAG=$TAG" >> $GITHUB_ENV
+          echo "COMMIT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          echo "DATE=$(date +'%Y-%m-%d %H:%M')" >> $GITHUB_ENV
+          echo "FILEDATE=$(date +'%Y%m%d-%H%M')" >> $GITHUB_ENV
 
       - name: get last 12h commits
         run: |
@@ -78,18 +79,53 @@ jobs:
           if [ -z "$COMMITS" ]; then
             COMMITS="no commits in the last 12 hours"
           fi
+
           echo "COMMITS<<EOF" >> $GITHUB_ENV
           echo "$COMMITS" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
 
-      - name: create nightly release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ env.TAG }}
-          name: nightly build (${{ env.TAG }})
-          body: ${{ env.COMMITS }}
-          prerelease: true
-          files: |
-            build/lara.ipa
+      - name: get existing nightly release body
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BODY=$(gh release view nightly --json body -q .body 2>/dev/null || echo "")
+          echo "BODY<<EOF" >> $GITHUB_ENV
+          echo "$BODY" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: build release notes
+        run: |
+          {
+            echo "lara_${COMMIT} (${DATE}):"
+            echo "${COMMITS}"
+            echo ""
+            echo ""
+            echo "${BODY}"
+          } > release_notes.txt
+
+      - name: rename ipa
+        run: |
+          mkdir -p archived_ipas
+          cp build/lara.ipa "archived_ipas/lara_${COMMIT}_${FILEDATE}.ipa"
+
+      - name: create or update nightly release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create nightly \
+            archived_ipas/*.ipa \
+            --title "Nightly" \
+            --notes-file release_notes.txt \
+            --prerelease \
+          || gh release edit nightly \
+            --title "Nightly" \
+            --notes-file release_notes.txt \
+            --prerelease
+
+      - name: upload more ipa stuff blah blah
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          for file in archived_ipas/*.ipa; do
+            gh release upload nightly "$file" --clobber=false || true
+          done
