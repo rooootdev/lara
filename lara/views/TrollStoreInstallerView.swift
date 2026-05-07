@@ -385,19 +385,31 @@ struct TrollStoreInstallerView: View {
         addLog("✓ PersistenceHelper ready (~209 KB)")
         addLog("")
         addLog("=== Bypassing AMFI Entitlement Checks ===")
-        addLog("Instead of attempting to bypass AMFI UserClient entitlements,")
-        addLog("we will directly inject into the Kernel TrustCache.")
+        addLog("Stealing launchd's MAC label to bypass IOUserClient checks...")
         addLog("")
 
+        // Try entitlement injection/bypass
+        addLog("Calling entitlement_inject()...")
+        let ent_result = entitlement_inject("com.apple.private.amfi.can-load-cdhash")
+
+        if ent_result == 0 {
+            addLog("✓ Entitlement injection/bypass successful!")
+        } else {
+            addLog("⚠ Entitlement injection returned: \(ent_result)")
+            addLog("Proceeding anyway - will try IOUserClient")
+        }
+
         addLog("")
-        addLog("=== Injecting CDHash directly into Kernel TrustCache ===")
-        addLog("Avoiding AMFI UserClient to prevent kernel panics.")
-
-        // Inject CDHash directly into kernel memory
-        let result = trust_cache_inject_binary(bundlePath)
-
+        addLog("=== Injecting PersistenceHelper via UserClient ===")
+        addLog("Calling amfi_userclient_inject_binary()...")
+        
+        let result = amfi_userclient_inject_binary(bundlePath)
+        
+        addLog("Restoring original MAC label...")
+        entitlement_remove("com.apple.private.amfi.can-load-cdhash")
+        
         if result == 0 {
-            addLog("✓ CDHash injected successfully!")
+            addLog("✓ AMFI UserClient TrustCache injection successful!")
             addLog("")
             addLog("=== Installation Complete ===")
             addLog("")
