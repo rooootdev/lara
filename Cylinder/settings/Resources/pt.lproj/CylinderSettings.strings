@@ -1,0 +1,48 @@
+{
+    //Main part
+
+    ENABLED = "Ativado";
+    EFFECTS = "Efeitos";
+    FORMULAS = "Formulas";
+    RANDOMIZE = "De forma aleatória";
+
+    //credit yourself here (if you want)
+    TRANSLATION = "Tradução por RubenEnriques7";
+
+    DONATE = "Doar";
+    SOURCE_CODE = "Código fonte";
+    R_CYLINDER = "Mais efeitor em /r/cylinder";
+    BARREL = "Barrel (tweak original)";
+
+    //Effects subscreen
+
+    RESET_EFFECTS = "Limpar";
+
+    //Formulas subscreen
+
+    CREATE_NEW_FORMULA = "Criar nova formula";
+    CREATE_FORMULA_INFO = "Esta nova formula irá conter quaisquer efeitos que estejam ativos agora.";
+    FORMULA_NAME = "Nome da formula";
+    CREATE_FORMULA = "Criar Formula";
+    CANCEL = "Cancelar";
+    FORMULA_ALREADY_EXISTS = "Já existe uma formula com o mesmo nome.";
+    OVERWRITE_IT = "Substituir";
+    NO_EFFECTS_ENABLED_TITLE = "Não tens nenhum efeito ativo!";
+    NO_EFFECTS_ENABLED_DESC = "Volta atrás até à lista de efeitos, ativa alguns efeitos, e depois volta aqui e cria uma nova formula.";
+    NO_EFFECTS_ENABLED_OK = "Ok, Boa";
+
+    //Donate subscreen
+
+    THANK_YOU = "Obrigado";
+    PAYPAL = "Pressiona aqui para ir para o Safari e doar através do Paypal.";
+
+    //Footer text
+
+    //You do not have to translate this part if you don't want to. I realize it's a lot of work.
+
+    FOOTER_TEXT = "COMO CODIFICAR OS TEUS PROPRIOS EFEITOS:
+
+Abre o iFile (ou Filza) e vai a /Library/Cylinder. Aí verás um monte de pastas com nomes de contas. Nessas pastas vais ver um monte de ficheiros .lua. Se abrires algum desses ficheiros com o editor de texto conseguirás ver o código. Para começar recomndaria ver o ficheiro Backwards.lua na pasta gertab para ter uma ideia sobre como fazê-lo. Lá dentro, se editares o 2*offset para 3*offset (não esquecer de fazer reload aos efeitos em seguida) verás uma espécie de efeito tipo \"Backwards hella far\".
+
+Segue o padrão que vês para adicionar os teus próprios efeitos. Se ficares bloqueado, dá uma olhada no ficheiro EXAMPLE.lua ou pesquisa \"lua tutorial\" no YouTube.";
+}

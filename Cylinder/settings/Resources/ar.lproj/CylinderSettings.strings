@@ -1,0 +1,34 @@
+{
+    ENABLED = "تمكين";
+    EFFECTS = "مؤثرات";
+    FORMULAS = "الصيغ";
+    RANDOMIZE = "عشوائي";
+    TRANSLATION = "ترجمة حسين إبراهيم عباس";
+
+    DONATE = "ساهم بنجاحنا";
+    SOURCE_CODE = "شفرة المصدر";
+    R_CYLINDER = "المزيد من المؤثرات على  /r/cylinder";
+    BARREL = "Barrel (الأداة الأصلية)";
+
+    //Effects subscreen
+
+    RESET_EFFECTS = "حذف";
+
+    //Formulas subscreen
+
+    CREATE_NEW_FORMULA = "انتاج صيغة جديدة";
+    CREATE_FORMULA_INFO = "الصيغة الجديدة ستحتوي على كل المؤثرات التي ستقوم بتفعيلها الآن.";
+    FORMULA_NAME = "اسم الصيغة";
+    CREATE_FORMULA = "أنتج الصيغة";
+    CANCEL = "إلغاء";
+    FORMULA_ALREADY_EXISTS = "هناك صيغة حالية موجودة بنفس الاسم.";
+    OVERWRITE_IT = "استبدال";
+    NO_EFFECTS_ENABLED_TITLE = "لا يوجد لديك أي مؤثرات ممكنة!";
+    NO_EFFECTS_ENABLED_DESC = "يرجى العودة لقائمة المؤثرات وتفعيل البعض منها ومن ثم العودة هنا لعمل صيغة جديدة.";
+    NO_EFFECTS_ENABLED_OK = "حسناً";
+
+    //Donate subscreen
+
+    THANK_YOU = "شكراً لك";
+    PAYPAL = "اضغط هنا ليتم تشغيل متصفح سفاري ليتم التبرع عبر PayPal";
+}

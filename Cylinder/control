@@ -1,0 +1,11 @@
+Package: com.ryannair05.cylinderremade
+Name: Cylinder Remade
+Architecture: iphoneos-arm
+Depends: firmware (>= 14.0), mobilesubstrate (>= 0.9.6011), preferenceloader
+Icon: file:///Library/PreferenceBundles/CylinderSettings.bundle/Icon@3x.png
+Description: Make your icons dance
+Maintainer: Ryan Nair
+Author: Ryan Nair
+Section: Tweaks
+Conflicts: com.ryannair05.cylinder
+Version: 0.0.4-beta

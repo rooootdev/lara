@@ -1,0 +1,37 @@
+{
+    //Main part
+    ENABLED = "Aktif";
+    EFFECTS = "Efektler";
+    FORMULAS = "Kişiselleştir";
+    RANDOMIZE = "Rastgele";
+
+    //Credit yourself here (you don't have to if you don't want to)
+    TRANSLATION = "Sezer Çelekoğlu tarafından Türkçeleştirildi.";
+
+    DONATE = "Bağış";
+    SOURCE_CODE = "Kaynak Kodu";
+    R_CYLINDER = "Daha fazlası için /r/cylinder";
+    BARREL = "Barrel (Orjinal Uygulama)";
+
+    //Effects subscreen
+
+    RESET_EFFECTS = "Temizle";
+
+    //Formulas subscreen
+
+    CREATE_NEW_FORMULA = "Yeni Bir Liste Yarat";
+    CREATE_FORMULA_INFO = "Yeni listede sahip olduğun bütün efektler açık olur.";
+    FORMULA_NAME = "Listenin Adı";
+    CREATE_FORMULA = "Liste Yarat";
+    CANCEL = "İptal";
+    FORMULA_ALREADY_EXISTS = "Bu isimde listen zaten bulunmakta.";
+    OVERWRITE_IT = "Üzerine Yaz";
+    NO_EFFECTS_ENABLED_TITLE = "Aktif efektin bulunmamakta!";
+    NO_EFFECTS_ENABLED_DESC = "Efekt listesine geri dön, efektleri aktif et, Sonra buradan yeni bir liste yarat.";
+    NO_EFFECTS_ENABLED_OK = "Tamamlandı";
+
+    //Donate subscreen
+
+    THANK_YOU = "Teşekkürler";
+    PAYPAL = "Buraya tıkla ve Safariiye git. Paypal üzerinden Bağış yap";
+}

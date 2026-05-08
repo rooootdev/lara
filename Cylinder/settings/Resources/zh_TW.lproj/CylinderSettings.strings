@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>@rweichler</key>
+	<string>推特@rweichler</string>
+	<key>BARREL</key>
+	<string>Barrel （其他調整插件）</string>
+	<key>Cylinder</key>
+	<string>特效調整（Cylinder）</string>
+	<key>DONATE</key>
+	<string>    捐      助</string>
+	<key>EFFECTS</key>
+	<string>效果</string>
+	<key>ENABLED</key>
+	<string>啟用</string>
+	<key>NO_EFFECTS_ENABLED_OK</key>
+	<string>OK</string>
+	<key>OVERWRITE_IT</key>
+	<string>覆蓋它</string>
+	<key>PAYPAL</key>
+	<string>點擊這裡進入的Safari瀏覽器，並通過貝寶（貝寶）捐助</string>
+	<key>RANDOMIZE</key>
+	<string>隨機</string>
+	<key>RESET_EFFECTS</key>
+	<string>取消</string>
+	<key>R_CYLINDER</key>
+	<string>更多特效在/r/cylinder</string>
+	<key>SOURCE_CODE</key>
+	<string>源  代  碼</string>
+	<key>THANK_YOU</key>
+	<string>感谢您捐助</string>
+	<key>TRANSLATION</key>
+	<string>如果你想把這個調整翻譯請推特聯繫我或發電子郵件</string>
+</dict>
+</plist>

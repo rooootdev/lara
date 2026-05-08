@@ -1,0 +1,37 @@
+{
+    //Main part
+
+    ENABLED = "Activé";
+    EFFECTS = "Effets";
+    FORMULAS = "Formules";
+    RANDOMIZE = "Aléatoire";
+
+    TRANSLATION = "J'ai besoin de traducteurs, si voulez traduire le tweak, envoyez-moi un tweet ou un email";
+
+    DONATE = "Dons";
+    SOURCE_CODE = "Code source";
+    R_CYLINDER = "Plus d'effets sur /r/cylinder";
+    BARREL = "Barrel (tweak original)";
+
+    //Effects subscreen
+
+    RESET_EFFECTS = "Effacer";
+
+    //Formulas subscreen
+
+    CREATE_NEW_FORMULA = "Créer une nouvelle formule";
+    CREATE_FORMULA_INFO = "La nouvelle formule aura les effets activés actuellement.";
+    FORMULA_NAME = "Nom de la formule";
+    CREATE_FORMULA = "Créer une Formule";
+    CANCEL = "Annuler";
+    FORMULA_ALREADY_EXISTS = "Ce nom de formule existe déjà.";
+    OVERWRITE_IT = "Remplacer";
+    NO_EFFECTS_ENABLED_TITLE = "Vous n'avez activé aucun effet!";
+    NO_EFFECTS_ENABLED_DESC = "Retournez à la liste des effets, activez en, revenez ensuite créer une nouvelle formule.";
+    NO_EFFECTS_ENABLED_OK = "Pas cool";
+
+    //Donate subscreen
+
+    THANK_YOU = "Merci";
+    PAYPAL = "Tapez ici pour aller sur Safari et faire un don via PayPal";
+}

@@ -1,0 +1,25 @@
+{
+    "BARREL" = "Barrel (Original Tweak)";
+    "CANCEL" = "Abbrechen";
+    "CREATE_FORMULA" = "Formel erzeugen";
+    "CREATE_FORMULA_INFO" = "Die neue Formel wird jeden Effekt beinhalten, den du jetzt aktivierst.";
+    "CREATE_NEW_FORMULA" = "Neue Formel erzeugen";
+    "DONATE" = "Spenden";
+    "EFFECTS" = "Effekte";
+    "ENABLED" = "Aktiviert";
+    "FOOTER_TEXT" = "WIE ERSTELLT MAN EFFEKTE:\n\nÖffne iFile (oder Filza) und gehe zu /Library/Cylinder. Dort siehst du eine Menge Ordner, die mit Usernames benannt sind. In diesen Ordnern befinden sich ein paar .lua-Dateien. Öffne irgendeine mit dem Text-Editor und du wirst den Code sehen. Für den Anfang empfehle ich die Backwards.lua Datei im gertab-Ordner anzuschauen, um eine Idee davon zu bekommen wie es funktioniert. Wenn du in der Datei den 2*offset zu 3*offset änderst, (Vergiss nicht den Effekt anschließend neu zu laden!) wirst du eine Art von \"versetztem Backwards\" - Effekt bemerken.\n\nFolge dieser Vorgehensweise um eigene Effekte zu erstellen. Wenn du Probleme bekommst, schau dir die EXAMPLE.lua Datei oder ein Tutorial auf YouTube an.";
+    "FORMULA_ALREADY_EXISTS" = "Eine Formel mit diesem Namen existiert bereits.";
+    "FORMULA_NAME" = "Name der Formel";
+    "FORMULAS" = "Formeln";
+    "NO_EFFECTS_ENABLED_DESC" = "Gehe zurück zur Effekt-Liste, aktiviere ein paar Effekte und versuche dein Glück erneut.";
+    "NO_EFFECTS_ENABLED_OK" = "Ok, alles klar...";
+    "NO_EFFECTS_ENABLED_TITLE" = "Du hast keine Effekte aktiviert!";
+    "OVERWRITE_IT" = "Überschreiben";
+    "PAYPAL" = "Hier tippen um Safari zu öffnen und via PayPal zu spenden.";
+    "R_CYLINDER" = "Mehr Effekte auf /r/cylinder";
+    "RANDOMIZE" = "Zufällig";
+    "RESET_EFFECTS" = "Zurücksetzen";
+    "SOURCE_CODE" = "Quell-Code";
+    "THANK_YOU" = "Danke";
+    "TRANSLATION" = "Übersetzungen gesucht! Wenn du dieses Tweak übersetzen willst, schick mir eine E-Mail oder einen Tweet.";
+}

@@ -1,0 +1,44 @@
+{
+    //Main part
+
+    ENABLED = "Uključeno";
+    EFFECTS = "Efekti";
+    FORMULAS = "Formule";
+    RANDOMIZE = "Nasumično";
+
+    //Credit yourself here (you don't have to if you don't want to)
+    TRANSLATION = "Preveo Patrik Perčinić";
+
+    DONATE = "Doniraj";
+    SOURCE_CODE = "Izvorni kod";
+    R_CYLINDER = "Još efekta na /r/cylinder";
+    BARREL = "Barrel (originalni tweak)";
+
+    //Effects subscreen
+
+    RESET_EFFECTS = "Poništi odabir";
+
+    //Formulas subscreen
+
+    CREATE_NEW_FORMULA = "Izradi novu formulu";
+    CREATE_FORMULA_INFO = "Nova formula će imati efekte koji su trenutno izabrani.";
+    FORMULA_NAME = "Ime formule";
+    CREATE_FORMULA = "Napravi formulu";
+    CANCEL = "Otkaži";
+    FORMULA_ALREADY_EXISTS = "Formula sa tim imenom već postoji";
+    OVERWRITE_IT = "Prepiši ga";
+    NO_EFFECTS_ENABLED_TITLE = "Nije izabran niti jedan efekt";
+    NO_EFFECTS_ENABLED_DESC = "Vrati se na listu efekta, izaberi neke efekte, onda se vrati ovdje i napravi novu formulu.";
+    NO_EFFECTS_ENABLED_OK = "Aight cool";
+
+    //Donate subscreen
+
+    THANK_YOU = "Hvala ti!";
+    PAYPAL = "Dodirnite ovdje da biste otišli u Safari i donirali putem PayPal-a";
+
+    FOOTER_TEXT = "KAKO KODIRATI SVOJE EFEKTE:
+
+Otvorite iFile (ili Filza) i idite na / Library / Cylinder. Tamo ćete vidjeti hrpu mapa s korisničkim imenima ljudi. U tim mapama vidjet ćete hrpu .lua datoteka. Ako otvorite bilo koji od ovih pomoću preglednika teksta, možete vidjeti kod. Za početak bih preporučio da pogledate datoteku Backwards.lua u mapi gertab kako biste dobili ideju kako se kodiraju efekti. Tamo, ako uredite 2*offset na 3*offset * (ne zaboravite ponovo učitati efekt), primijetit ćete da ste napravili novi efekt.
+
+Izmjenjujte kod u drugim datotekama kako biste dodali vlastite efekte ili napišite svoj ispočetka. Ako zapnete, pogledajte EXAMPLE.lua ili potražite \"lua tutorial \" na YouTubu.";
+}

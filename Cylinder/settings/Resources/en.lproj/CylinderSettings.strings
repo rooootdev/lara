@@ -1,0 +1,48 @@
+{
+    //Main part
+
+    ENABLED = "Enabled";
+    EFFECTS = "Effects";
+    FORMULAS = "Formulas";
+    RANDOMIZE = "Randomize";
+
+    //Don't translate this bit, credit yourself here (if you want)
+    TRANSLATION = "Translations wanted! If you'd like to translate this tweak shoot me a tweet or an email";
+
+    DONATE = "Donate";
+    SOURCE_CODE = "Source code";
+    R_CYLINDER = "More effects on /r/cylinder";
+    BARREL = "Barrel (original tweak)";
+
+    //Effects subscreen
+
+    RESET_EFFECTS = "Clear";
+
+    //Formulas subscreen
+
+    CREATE_NEW_FORMULA = "Create new formula";
+    CREATE_FORMULA_INFO = "The new formula will have whatever effects you have enabled right now.";
+    FORMULA_NAME = "Formula name";
+    CREATE_FORMULA = "Create Formula";
+    CANCEL = "Cancel";
+    FORMULA_ALREADY_EXISTS = "A formula with that name already exists.";
+    OVERWRITE_IT = "Overwrite it";
+    NO_EFFECTS_ENABLED_TITLE = "You have no effects enabled!";
+    NO_EFFECTS_ENABLED_DESC = "Go back to the effects list, enable some effects, then come back here and create a new formula.";
+    NO_EFFECTS_ENABLED_OK = "Aight cool";
+
+    //Donate subscreen
+
+    THANK_YOU = "Thank you";
+    PAYPAL = "Tap here to go to Safari and donate via PayPal";
+
+    //Footer text
+
+    //You do not have to translate this part if you don't want to. I realize it's a lot of work.
+
+    FOOTER_TEXT = "HOW TO CODE YOUR OWN EFFECTS:
+
+Click Source Code and you will be taken to this project's Github page. Go to /tweak/CylinderAnimator.swift where you will see the code for all the effects. You can add your own static method to the CylinderAnimator class and the go to -addEffectsFromDirectory: in settings/CLEffectsController.m and add your own CLEffect object to the effects array filling out its name, selector, and your name
+
+Follow the pattern you see in order to add your own effects. If you get stuck, take a look at the examples or search \"Swift tutorial\" on YouTube.";
+}

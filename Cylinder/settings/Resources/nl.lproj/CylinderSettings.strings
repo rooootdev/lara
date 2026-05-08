@@ -1,0 +1,38 @@
+{
+    //Main part
+
+    ENABLED = "aan";
+    EFFECTS = "Effecten";
+    FORMULAS = "Formules";
+    RANDOMIZE = "Willekeurig";
+
+    //Credit yourself here (you don't have to if you don't want to)
+    TRANSLATION = "Vertaald door Collin Smits";
+
+    DONATE = "Doneer";
+    SOURCE_CODE = "Project code";
+    R_CYLINDER = "Meer effecten /r/cylinder";
+    BARREL = "Barrel (originele tweak)";
+
+    //Effects subscreen
+
+    RESET_EFFECTS = "reset";
+
+    //Formulas subscreen
+
+    CREATE_NEW_FORMULA = "maak een nieuwe formule";
+    CREATE_FORMULA_INFO = "De nieuwe formule bevat alle effecten die u heeft geselecteerd.";
+    FORMULA_NAME = "Naam van de formule";
+    CREATE_FORMULA = "Maak een formule";
+    CANCEL = "Annuleer";
+    FORMULA_ALREADY_EXISTS = "Er is al een formule met deze naam.";
+    OVERWRITE_IT = "Vervangen";
+    NO_EFFECTS_ENABLED_TITLE = "Er zijn geen effecten geselecteerd!";
+    NO_EFFECTS_ENABLED_DESC = "Ga terug en selecteer een paar effecten en probeer het opnieuw.";
+    NO_EFFECTS_ENABLED_OK = "Oke cool";
+
+    //Donate subscreen
+
+    THANK_YOU = "Dank u";
+    PAYPAL = "Klik hier om safari te openen en te doneren";
+}

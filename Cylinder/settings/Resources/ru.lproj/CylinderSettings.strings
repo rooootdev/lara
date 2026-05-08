@@ -1,0 +1,37 @@
+{
+    //Main part
+    ENABLED = "включено";
+    EFFECTS = "эффекты";
+    FORMULAS = "формулы";
+    RANDOMIZE = "случайный порядок";
+
+    //Don't translate this bit, credit yourself here (if you want)
+
+    TRANSLATION = "Переведено Леонидом (мой имейл leonid0079@gmail.com )";
+    DONATE = "пожертвовать";
+    SOURCE_CODE = "Исходник";
+    R_CYLINDER = "Больше эффектов на  /r/cylinder";
+    BARREL = "Barrel (с него взята идея)";
+
+    //Effects subscreen
+
+    RESET_EFFECTS = "очистить";
+
+    //Formulas subscreen
+
+    CREATE_NEW_FORMULA = "Создать новую формулу";
+    CREATE_FORMULA_INFO = "В новой формуле будут все эффекты которые включены в данный момент.";
+    FORMULA_NAME = "Название формулы";
+    CREATE_FORMULA = "Создать формулу";
+    CANCEL = "отменить";
+    FORMULA_ALREADY_EXISTS = "Уже есть формула с таким названием.";
+    OVERWRITE_IT = "Переписать это?";
+    NO_EFFECTS_ENABLED_TITLE = "Вы не включили эффекты!";
+    NO_EFFECTS_ENABLED_DESC = "Вернись обратно в список эффектов и выбери несколько эффектов потом возвращайся сюда.";
+    NO_EFFECTS_ENABLED_OK = "Ок";
+
+    //Donate subscreen
+
+    THANK_YOU = "Спасибо";
+    PAYPAL = "Нажмите здесь, чтобы перейти к Safari и пожертвовать через PayPal";
+}

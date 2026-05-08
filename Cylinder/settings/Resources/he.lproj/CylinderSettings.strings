@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>BARREL</key>
+	<string>Barrel (הטוויק המקורי)</string>
+	<key>CANCEL</key>
+	<string>בטל</string>
+	<key>CREATE_FORMULA</key>
+	<string>צור נוסחה</string>
+	<key>CREATE_FORMULA_INFO</key>
+	<string>לנוסחה החדשה יהיו האפקטים שמופעלים כרגע.</string>
+	<key>CREATE_NEW_FORMULA</key>
+	<string>צור נוסחה חדשה</string>
+	<key>DONATE</key>
+	<string>תרום</string>
+	<key>EFFECTS</key>
+	<string>אפקטים</string>
+	<key>ENABLED</key>
+	<string>הפעל</string>
+	<key>FOOTER_TEXT</key>
+	<string>איך לקודד אפקטים משלך:
+
+פתח את iFile (או Filza) ולך ל/Library/Cylinder.
+שם תראה הרבה תיקיות עם שמות משתמשים של אנשים.
+בתיקיות אלו תראה הרבה קבצי lua.
+אם תפתח אחד מהם עם קורא טקסט תוכל לראות את הקוד.
+להתחלה אני ממליץ להסתכל על על קובץ הBackwards.lua בתיקיית הgertab כדי לקבל רעיון כללי של איך לעשות את זה.
+שם אם תערוך את ה2*offset ל3*offset (אל תשכח לטעון מחדש את האפקט לאחר מכן) תשים לב לסוג של אפקט ״Backwards hella far״ (האייקונים ילכו אחורה ויהיה מרחק רב בין דף לדף).
+
+עקוב אחרי הדפוס שאתה רואה כדי להוסיף אפקטים משלך. 
+אם תיתקע, תסתכל על EXAMPLE.lua או חפש "lua tutorial" בYouTube.</string>
+	<key>FORMULAS</key>
+	<string>נוסחאות</string>
+	<key>FORMULA_ALREADY_EXISTS</key>
+	<string>נוסחה עם שם זה קיימת כבר</string>
+	<key>FORMULA_NAME</key>
+	<string>שם הנוסחה</string>
+	<key>NO_EFFECTS_ENABLED_DESC</key>
+	<string>חזור לרשימת האפקטים, הפעל כמה אפקטים, ואז חזור הנה וצור נוסחה חדשה.</string>
+	<key>NO_EFFECTS_ENABLED_OK</key>
+	<string>אוקיי</string>
+	<key>NO_EFFECTS_ENABLED_TITLE</key>
+	<string>אין לך אפקטים מופעלים!</string>
+	<key>OVERWRITE_IT</key>
+	<string>שכתב</string>
+	<key>PAYPAL</key>
+	<string>לחץ כאן כדי ללכת לספארי ולתרום דרך PayPal</string>
+	<key>RANDOMIZE</key>
+	<string>אקראי</string>
+	<key>RESET_EFFECTS</key>
+	<string>נקה</string>
+	<key>R_CYLINDER</key>
+	<string>עוד אפקטים ב/r/cylinder</string>
+	<key>SOURCE_CODE</key>
+	<string>קוד מקור</string>
+	<key>THANK_YOU</key>
+	<string>תודה</string>
+	<key>TRANSLATION</key>
+	<string>תרגום לעברית על ידי @Aranshavit</string>
+</dict>
+</plist>

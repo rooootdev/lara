@@ -1,0 +1,37 @@
+{
+    //Main part
+
+    ENABLED = "Aktiveret";
+    EFFECTS = "Effekter";
+    FORMULAS = "Formularer";
+    RANDOMIZE = "Bland";
+
+    TRANSLATION = "Denne tweak er oversat af Jonas Lindenskov Nielsen (@jlndk)";
+
+    DONATE = "Donér";
+    SOURCE_CODE = "Bundkode";
+    R_CYLINDER = "Flere effekter på /r/cylinder";
+    BARREL = "Barrel (original tweak)";
+
+    //Effects subscreen
+
+    RESET_EFFECTS = "Ryd";
+
+    //Formulas subscreen
+
+    CREATE_NEW_FORMULA = "Opret ny formular";
+    CREATE_FORMULA_INFO = "Formularen vil indeholde de effekter du har aktivet nu.";
+    FORMULA_NAME = "Formular Navn";
+    CREATE_FORMULA = "Opret Formular";
+    CANCEL = "Annuller";
+    FORMULA_ALREADY_EXISTS = "Der eksistere allerede en formular med dette navn.";
+    OVERWRITE_IT = "Overskriv";
+    NO_EFFECTS_ENABLED_TITLE = "Du har ingen effekter aktiveret!";
+    NO_EFFECTS_ENABLED_DESC = "Gå tilbage til effektlisten, aktiver nogle effekter, og kom tilbage hertil for at oprette en ny formular.";
+    NO_EFFECTS_ENABLED_OK = "Ok, cool";
+
+    //Donate subscreen
+
+    THANK_YOU = "Mange tak";
+    PAYPAL = "Tryk her for at åbne PayPal i Safari";
+}

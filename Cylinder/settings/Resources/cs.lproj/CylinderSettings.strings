@@ -1,0 +1,38 @@
+{
+    //Main part
+
+    ENABLED = "Zapnuto";
+    EFFECTS = "Efekty";
+    FORMULAS = "Kombinace";
+    RANDOMIZE = "Náhodně";
+
+    //Credit yourself here (you don't have to if you don't want to)
+    TRANSLATION = "Přeložil Sh4rP EYE (@MrSh4rPEYE)";
+
+    DONATE = "Přispět";
+    SOURCE_CODE = "Zdrojový kód";
+    R_CYLINDER = "Více efektů na /r/cylinder";
+    BARREL = "Barrel (původní tweak)";
+
+    //Effects subscreen
+
+    RESET_EFFECTS = "Vyčistit";
+
+    //Formulas subscreen
+
+    CREATE_NEW_FORMULA = "Nová kombinace";
+    CREATE_FORMULA_INFO = "Nová kombinace bude obsahovat všechny efekty, které máte zrovna zapnuté.";
+    FORMULA_NAME = "Jméno kombinace";
+    CREATE_FORMULA = "Vytvořit";
+    CANCEL = "Zrušit";
+    FORMULA_ALREADY_EXISTS = "Kombinace s tímto jménem už existuje.";
+    OVERWRITE_IT = "Přepsat";
+    NO_EFFECTS_ENABLED_TITLE = "Nemáte zapnuté žádné efekty!";
+    NO_EFFECTS_ENABLED_DESC = "Vraťte se zpět do seznamu efektů, nějaké z nich zapněte a poté přijďte zpátky sem a vytvořte novou kombinaci.";
+    NO_EFFECTS_ENABLED_OK = "Ahá, jasný";
+
+    //Donate subscreen
+
+    THANK_YOU = "Děkuji Vám";
+    PAYPAL = "Klikněte zde pro přechod do Safari, kde budete moci přispět přes PayPal";
+}

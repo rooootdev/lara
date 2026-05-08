@@ -1,0 +1,37 @@
+{
+    //Main part
+
+    ENABLED = "Aktiverad";
+    EFFECTS = "Effekter";
+    FORMULAS = "Formler";
+    RANDOMIZE = "Slumpmässigt";
+
+    TRANSLATION = "Översatt Av Sebastian (Grodda Da Lo)";
+
+    DONATE = "Donera";
+    SOURCE_CODE = "Källkod";
+    R_CYLINDER = "Mer effekter på /r/cylinder";
+    BARREL = "Barrel (Original tweak)";
+
+    //Effects subscreen
+
+    RESET_EFFECTS = "Clear";
+
+    //Formulas subscreen
+
+    CREATE_NEW_FORMULA = "Skapa ny formel";
+    CREATE_FORMULA_INFO = "Den nya formeln kommer ha vilka effekter som du har valt.";
+    FORMULA_NAME = "Formel namn";
+    CREATE_FORMULA = "Skapa Formel";
+    CANCEL = "Avbryt";
+    FORMULA_ALREADY_EXISTS = "En formel med det namnet finns redan.";
+    OVERWRITE_IT = "Skriva Över";
+    NO_EFFECTS_ENABLED_TITLE = "Du har inte igång några effekter";
+    NO_EFFECTS_ENABLED_DESC = "Gå tillbaka till effekt listan och sätt igång några, sedan kom tillbaka hit och skapa en ny formula.";
+    NO_EFFECTS_ENABLED_OK = "Det är lungt";
+
+    //Donate subscreen
+
+    THANK_YOU = "Tack så mycket";
+    PAYPAL = "Tryck här för att gå till Safari och donera via PayPal";
+}

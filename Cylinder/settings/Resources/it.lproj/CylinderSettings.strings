@@ -1,0 +1,38 @@
+{
+    //Main part
+
+    ENABLED = "Attivato";
+    EFFECTS = "Effetti";
+    FORMULAS = "Combinazioni";
+    RANDOMIZE = "Casuale";
+
+    //Credit yourself here (you don't have to if you don't want to)
+    TRANSLATION = "Traduzione italiana di: Omega33";
+
+    DONATE = "Dona qui";
+    SOURCE_CODE = "Codice sorgente";
+    R_CYLINDER = "Altri effetti in /r/cylinder";
+    BARREL = "Barrel (tweak originale)";
+
+    //Effects subscreen
+
+    RESET_EFFECTS = "Cancella";
+
+    //Formulas subscreen
+
+    CREATE_NEW_FORMULA = "Crea una nuova combinazione";
+    CREATE_FORMULA_INFO = "La nuova combinazione avrà tutti gli effetti attivati in questo momento.";
+    FORMULA_NAME = "Nome della combinazione";
+    CREATE_FORMULA = "Crea combinazione";
+    CANCEL = "Annulla";
+    FORMULA_ALREADY_EXISTS = "Lo stesso nome è stato usato per un'altra combinazione!";
+    OVERWRITE_IT = "Sovrascrivila";
+    NO_EFFECTS_ENABLED_TITLE = "Non hai nessun effetto attivato!";
+    NO_EFFECTS_ENABLED_DESC = "Torna alla lista degli effetti, attiva qualche effetto, dopo torna qui e crea una nuova combinazione.";
+    NO_EFFECTS_ENABLED_OK = "Ok!";
+
+    //Donate subscreen
+
+    THANK_YOU = "Grazie";
+    PAYPAL = "Clicca qui per donare con PayPal tramite Safari";
+}

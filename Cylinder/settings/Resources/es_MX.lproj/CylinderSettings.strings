@@ -1,0 +1,38 @@
+{
+    //Main part
+
+    ENABLED = "Habilitado";
+    EFFECTS = "Efectos";
+    FORMULAS = "Fórmulas";
+    RANDOMIZE = "Aleatorio";
+
+    //Credit yourself here (you don't have to if you don't want to)
+    TRANSLATION = "Traducido por Franco Rudelir (@EpicRudelir en Twitter)";
+
+    DONATE = "Donar";
+    SOURCE_CODE = "Código fuente";
+    R_CYLINDER = "Más efectos en /r/cylinder";
+    BARREL = "Barrel (tweak original)";
+
+    //Effects subscreen
+
+    RESET_EFFECTS = "Restaurar efectos";
+
+    //Formulas subscreen
+
+    CREATE_NEW_FORMULA = "Crear nueva fórmula";
+    CREATE_FORMULA_INFO = "La nueva fórmula será guardada con los efectos que están habilitados en este momento.";
+    FORMULA_NAME = "Nombre de la fórmula";
+    CREATE_FORMULA = "Crear fórmula";
+    CANCEL = "Cancelar";
+    FORMULA_ALREADY_EXISTS = "Ya existe una fórmula con ese nombre.";
+    OVERWRITE_IT = "Sobreescribirla";
+    NO_EFFECTS_ENABLED_TITLE = "No tienes ningún efecto activado!";
+    NO_EFFECTS_ENABLED_DESC = "Ve a la lista de efectos, activa algunos, luego vuelva y crea una nueva fórmula.";
+    NO_EFFECTS_ENABLED_OK = "Listo";
+
+    //Donate subscreen
+
+    THANK_YOU = "Gracias";
+    PAYPAL = "Presiona aquí para ir a Safari y donar via PayPal";
+}
