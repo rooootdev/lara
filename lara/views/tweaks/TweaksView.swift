@@ -43,6 +43,8 @@ struct TweaksView: View {
                         .disabled(!mgr.sbxready)
                     NavigationLink("JIT Enabler", destination: JitView())
                         .disabled(!mgr.sbxready)
+                    NavigationLink("Cylinder", destination: CylinderView())
+                        .disabled(.!mgr.sbxready)
                     NavigationLink("Custom Overwrite", destination: CustomView(mgr: mgr))
                         .disabled(!mgr.vfsready)
                 }
