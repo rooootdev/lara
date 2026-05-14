@@ -53,6 +53,8 @@ struct TweaksView: View {
                 Section(header: HeaderLabel(text: "System", icon: "gear")) {
                     NavigationLink("VarClean", destination: VarCleanView())
                         .disabled(!mgr.sbxready)
+                    NavigationLink("OTA Disabler", destination: OTAView())
+                        .disabled(!mgr.dsready)
                     NavigationLink("Custom Overwrite", destination: CustomView(mgr: mgr))
                         .disabled(!mgr.vfsready)
                 }
