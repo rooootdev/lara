@@ -29,26 +29,6 @@
         }
       ],
       "appPermissions": {}
-    },
-    {
-      "name": "lara (Nightly)",
-      "bundleIdentifier": "com.roooot.lara",
-      "developerName": "rooootdev & lara team",
-      "subtitle": "This is the nightly testing build for lara.",
-      "localizedDescription": "This is the nightly testing build for lara. Only use this if you're interested in new features and do not care about stability. lara is a customization toolbox that utilizes DarkSword. Supports iOS 16.0 - iOS 18.7.1 & iOS 26.0.x, excluding M5 and A19.\n\nFor more information, check out our GitHub! https://github.com/rooootdev/lara. Join the Discord if you'd like to report any bugs! https://discord.gg/gw8PcRF3Jr.",
-      "iconURL": "https://raw.githubusercontent.com/rooootdev/lara/refs/heads/main/lara.png",
-      "tintColor": "#5CA399",
-      "versions": [
-        {
-          "version": "0.2",
-          "date": "2026-05-5",
-          "size": 3450675,
-          "downloadURL": "https://github.com/rooootdev/lara/releases/download/nightly/lara.ipa",
-          "localizedDescription": "",
-          "minOSVersion": "16.0"
-        }
-      ],
-      "appPermissions": {}
     }
   ]
 }
