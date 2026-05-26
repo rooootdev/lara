@@ -48,7 +48,7 @@ NSString* get_container_uuid_for_app(NSString *targetName) {
             
             NSURL *containerURL = [app containerURL];
             if (containerURL) {
-                foundUUID = [containerURL lastPathComponent];
+                foundUUID = [containerURL path];
                 break;
             }
         }
