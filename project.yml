@@ -1,0 +1,26 @@
+name: Lara
+
+options:
+  bundleIdPrefix: com.roooot
+  deploymentTarget:
+    iOS: 17.0
+
+targets:
+  Lara:
+    type: application
+    platform: iOS
+
+    sources:
+      - path: lara
+
+    resources:
+      - path: lara/assets/lara.png
+
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.roooot.lara
+        INFOPLIST_FILE: lara/Info.plist
+        SWIFT_VERSION: 5.0
+        ENABLE_BITCODE: NO
+        CLANG_ENABLE_OBJC_ARC: YES
+        SWIFT_OBJC_BRIDGING_HEADER: lara/lara-Bridging-Header.h
