@@ -7,9 +7,12 @@ mkdir -p build
 echo "Build Started!"
 echo
 
+SCHEME=$(xcodebuild -list -project lara.xcodeproj | sed -n '/Schemes:/,$p' | tail -n +2 | head -n 1 | xargs)
+echo "Scheme: $SCHEME"
+
 xcodebuild \
   -project lara.xcodeproj \
-  -scheme lara \
+  -scheme "$SCHEME" \
   -configuration Debug \
   -sdk iphoneos \
   -arch arm64e \
