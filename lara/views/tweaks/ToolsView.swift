@@ -24,6 +24,7 @@ struct ToolsView: View {
     @State private var pid: pid_t = getpid()
     @State private var status: String?
     @State private var crashname: String = "SpringBoard"
+    @State private var pausedProcesses: Set<String> = []
     
     private enum tokenclass: String, CaseIterable, Identifiable {
         case read = "com.apple.app-sandbox.read"
@@ -156,10 +157,26 @@ struct ToolsView: View {
                     }
                 }
                 .disabled(crashname.isEmpty)
+                
+                Button("Pause") {
+                    crashname.withCString { cstr in
+                         _ = proc_pause_resume(cstr, false)
+                    pausedProcesses.insert(crashname)
+                    }
+                }
+                .disabled(crashname.isEmpty || pausedProcess.contains(crashname))
+
+                Button("Resume") {
+                    crashname.withCString { cstr in
+                         _ = proc_pause_resume(cstr, true)
+                    }
+                }
+                .disabled(crashname.isEmpty || !pausedProcess.contains(crashname))
+                
             } header: {
-                Text("Crasher")
+                Text("Task Manager")
             } footer: {
-                Text("Crashes the selected process")
+                Text("Pause, Resume or Crash a Selected Process")
             }
 
             Section {
