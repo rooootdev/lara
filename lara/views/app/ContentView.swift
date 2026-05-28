@@ -230,17 +230,28 @@ struct ContentView: View {
             } header: {
                 HeaderLabel(text: "RemoteCall", icon: "syringe")
             } footer: {
-                if let error = mgr.rcLastError ?? mgr.sbProc?.lastError {
-                    Text("Error: \(error)")
-                        .foregroundColor(.red)
+                VStack(alignment: .leading, spacing: 4) {
+                    if let error = mgr.rcLastError ?? mgr.sbProc?.lastError {
+                        Text("Error: \(error)")
+                            .foregroundColor(.red)
+                    }
+                    if RemoteCall.isLiveContainerRuntime() && !RemoteCall.isLiveProcessRuntime() {
+                        Text("RemoteCall needs a PAC-enabled LiveContainer launch context. The main exploit may still work when RemoteCall is unavailable.")
+                    }
+                    if isdebugged() {
+                        Text("Not available when a debugger is attached.")
+                    }
+                    Text("RemoteCall is relatively unstable and may not work properly.")
+                    if isIOS16() {
+                        Text("iOS 16 tip: Open Control Center after tapping Initialize RemoteCall. This significantly improves the success rate and speed.")
+                            .fontWeight(.semibold)
+                            .foregroundColor(.orange)
+                        Text("If initialization fails after about 2 minutes, respring, relaunch Lara, and try again.")
+                            .fontWeight(.semibold)
+                            .foregroundColor(.red)
+                    }
                 }
-                if RemoteCall.isLiveContainerRuntime() && !RemoteCall.isLiveProcessRuntime() {
-                    Text("RemoteCall needs a PAC-enabled LiveContainer launch context. The main exploit may still work when RemoteCall is unavailable.")
-                }
-                if isdebugged() {
-                    Text("Not available when a debugger is attached.")
-                }
-                Text("RemoteCall is relatively unstable and may not work properly.")
+                .font(.footnote)
             }
             #endif
         }

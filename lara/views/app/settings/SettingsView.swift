@@ -33,11 +33,13 @@ struct SettingsView: View {
     @AppStorage("selectedMethod") private var selectedMethod: method = .hybrid
     @AppStorage("keepAlive") private var keepAlive: Bool = false
     @AppStorage("stashKRW") private var stashKRW: Bool = false
+    @AppStorage("keepSpringBoardRemoteCallAliveIOS16") private var keepSpringBoardRemoteCallAliveIOS16: Bool = false
     
     @State private var dlingkcache: Bool = false
     @State private var showkcacheimport: Bool = false
     @State private var importingkcache: Bool = false
     @State private var showkcachetips: Bool = false
+    @State private var stashingKRWNow: Bool = false
     
     @AppStorage("logsdisplaymode") private var selectedlogdisplaymode: logsdisplaymode = .toolbar
     @AppStorage("loggerNoBS") private var loggerNoBS: Bool = true
@@ -204,6 +206,51 @@ struct SettingsView: View {
                 #if !DISABLE_REMOTECALL
                 Section(header: HeaderLabel(text: "RemoteCall", icon: "syringe")) {
                     Toggle("Stash KRW primitives", isOn: $stashKRW)
+                        .onChange(of: stashKRW) { enabled in
+                            if enabled && isIOS16() {
+                                Alertinator.shared.alert(
+                                    title: "iOS 16 Warning",
+                                    body: "Saving KRW on iOS 16 is currently unstable. If it fails, manually stash KRW a few more times."
+                                )
+                            }
+                        }
+                    if isIOS16() {
+                        Toggle("Keep SpringBoard RemoteCall alive in background", isOn: $keepSpringBoardRemoteCallAliveIOS16)
+                        Text("Warning: If Lara exits while RemoteCall is active, SpringBoard may respring.")
+                            .font(.footnote.weight(.semibold))
+                            .foregroundColor(.red)
+
+                        Button {
+                            guard !stashingKRWNow else { return }
+                            stashingKRWNow = true
+                            mgr.stashKRWToLaunchd { success in
+                                stashingKRWNow = false
+                                if success {
+                                    Alertinator.shared.alert(
+                                        title: "KRW Stashed",
+                                        body: "KRW primitives were successfully stashed to launchd."
+                                    )
+                                } else {
+                                    let error = mgr.rcLastError ?? "Please try manually stashing KRW a few more times."
+                                    Alertinator.shared.alert(
+                                        title: "Failed to Stash KRW",
+                                        body: error
+                                    )
+                                }
+                            }
+                        } label: {
+                            if stashingKRWNow {
+                                HStack {
+                                    Text("Stashing KRW to launchd...")
+                                    Spacer()
+                                    ProgressView()
+                                }
+                            } else {
+                                Text("Stash KRW to launchd now")
+                            }
+                        }
+                        .disabled(!mgr.dsready || mgr.rcrunning || stashingKRWNow)
+                    }
                     Toggle("Allow >10 dock icons", isOn: $rcDockUnlimited)
                 }
                 #endif

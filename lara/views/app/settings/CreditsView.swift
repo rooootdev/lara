@@ -32,7 +32,7 @@ struct CreditsView: View {
                 LinkCreditCell(name: "Jurre", description: "EditorView, PocketPoster Helper, various improvements", url: "https://github.com/jurre111") {
                     LinkCreditIcon(url: "https://github.com/jurre111.png")
                 }
-                LinkCreditCell(name: "neon", description: "Respring Script and zipmgr", url: "https://github.com/neonmodder123") {
+                LinkCreditCell(name: "neon", description: "Respring Script, zipmgr, fixing Passcode Themes, and adding App Decryption", url: "https://github.com/neonmodder123") {
                     LinkCreditIcon(url: "https://github.com/neonmodder123.png")
                 }
                 LinkCreditCell(name: "Skadz", description: "Respring Method", url: "https://github.com/skadz108") {

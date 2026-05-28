@@ -386,3 +386,165 @@ public class ZipArchive {
 
     private static let lfhSize = 30
 }
+
+private func writeLE16(_ value: UInt16, to data: inout Data) {
+    withUnsafeBytes(of: value) { data.append(contentsOf: $0) }
+}
+
+private func writeLE32(_ value: UInt32, to data: inout Data) {
+    withUnsafeBytes(of: value) { data.append(contentsOf: $0) }
+}
+
+private func crc32OfFile(at url: URL) -> (crc: UInt32, data: Data) {
+    let data = (try? Data(contentsOf: url)) ?? Data()
+    return (data.zipCRC32, data)
+}
+
+public func createZipArchive(fromDirectory sourceURL: URL, to destinationURL: URL, compressionMethod: UInt16 = 0) throws {
+    let mgr = laramgr.shared
+    var error = ""
+    let fm = FileManager.default
+    var fileEntries: [(name: String, data: Data, crc32: UInt32)] = []
+    var dirEntries: [String] = []
+
+    let resolvedSource = sourceURL.resolvingSymlinksInPath()
+
+    guard let enumerator = fm.enumerator(at: sourceURL, includingPropertiesForKeys: [.isDirectoryKey], options: [.skipsHiddenFiles]) else {
+        error = "(zip) cannot enumerate source directory"
+        mgr.logmsg("\(error)")
+        throw ZipError.corruptArchive("\(error)")
+    }
+
+    for case let fileURL as URL in enumerator {
+        let resolvedFile = fileURL.resolvingSymlinksInPath()
+        guard let relRange = resolvedFile.path.range(of: resolvedSource.path + "/") else { continue }
+        let relPath = String(resolvedFile.path[relRange.upperBound...])
+        var isDir: ObjCBool = false
+        guard fm.fileExists(atPath: fileURL.path, isDirectory: &isDir) else { continue }
+
+        if isDir.boolValue {
+            dirEntries.append(relPath + "/")
+        } else {
+            let (crc, data) = crc32OfFile(at: fileURL)
+            fileEntries.append((relPath, data, crc))
+        }
+    }
+
+    guard fm.createFile(atPath: destinationURL.path, contents: nil, attributes: nil) else {
+        error = "(zip) cannot create output file"
+        mgr.logmsg("\(error)")
+        throw ZipError.corruptArchive("\(error)")
+    }
+    let fh = try FileHandle(forWritingTo: destinationURL)
+    defer { try? fh.close() }
+
+    var localOffsets: [UInt32] = []
+    var cdEntries: [Data] = []
+
+    for entry in fileEntries {
+        let nameData = entry.name.data(using: .utf8)!
+        let nameLen = UInt16(nameData.count)
+        let offset = UInt32(try fh.offset())
+
+        var lfh = Data()
+        writeLE32(lfhSignature, to: &lfh)
+        writeLE16(20, to: &lfh)
+        writeLE16(0, to: &lfh)
+        writeLE16(0, to: &lfh)
+        writeLE16(0, to: &lfh)
+        writeLE16(0, to: &lfh)
+        writeLE32(entry.crc32, to: &lfh)
+        writeLE32(UInt32(entry.data.count), to: &lfh)
+        writeLE32(UInt32(entry.data.count), to: &lfh)
+        writeLE16(nameLen, to: &lfh)
+        writeLE16(0, to: &lfh)
+        try fh.write(contentsOf: lfh)
+        try fh.write(contentsOf: nameData)
+        try fh.write(contentsOf: entry.data)
+
+        var cd = Data()
+        writeLE32(cdSignature, to: &cd)
+        writeLE16(20, to: &cd)
+        writeLE16(20, to: &cd)
+        writeLE16(0, to: &cd)
+        writeLE16(0, to: &cd)
+        writeLE16(0, to: &cd)
+        writeLE16(0, to: &cd)
+        writeLE32(entry.crc32, to: &cd)
+        writeLE32(UInt32(entry.data.count), to: &cd)
+        writeLE32(UInt32(entry.data.count), to: &cd)
+        writeLE16(nameLen, to: &cd)
+        writeLE16(0, to: &cd)
+        writeLE16(0, to: &cd)
+        writeLE16(0, to: &cd)
+        writeLE16(0, to: &cd)
+        writeLE32(0x81A40000, to: &cd)
+        writeLE32(offset, to: &cd)
+        cd.append(nameData)
+
+        localOffsets.append(offset)
+        cdEntries.append(cd)
+    }
+
+    for dirName in dirEntries {
+        let nameData = dirName.data(using: .utf8)!
+        let nameLen = UInt16(nameData.count)
+        let offset = UInt32(try fh.offset())
+
+        var lfh = Data()
+        writeLE32(lfhSignature, to: &lfh)
+        writeLE16(20, to: &lfh)
+        writeLE16(0, to: &lfh)
+        writeLE16(0, to: &lfh)
+        writeLE16(0, to: &lfh)
+        writeLE16(0, to: &lfh)
+        writeLE32(0, to: &lfh)
+        writeLE32(0, to: &lfh)
+        writeLE32(0, to: &lfh)
+        writeLE16(nameLen, to: &lfh)
+        writeLE16(0, to: &lfh)
+        try fh.write(contentsOf: lfh)
+        try fh.write(contentsOf: nameData)
+
+        var cd = Data()
+        writeLE32(cdSignature, to: &cd)
+        writeLE16(20, to: &cd)
+        writeLE16(20, to: &cd)
+        writeLE16(0, to: &cd)
+        writeLE16(0, to: &cd)
+        writeLE16(0, to: &cd)
+        writeLE16(0, to: &cd)
+        writeLE32(0, to: &cd)
+        writeLE32(0, to: &cd)
+        writeLE32(0, to: &cd)
+        writeLE16(nameLen, to: &cd)
+        writeLE16(0, to: &cd)
+        writeLE16(0, to: &cd)
+        writeLE16(0, to: &cd)
+        writeLE16(0, to: &cd)
+        writeLE32(0x41ED0000, to: &cd)
+        writeLE32(offset, to: &cd)
+        cd.append(nameData)
+
+        cdEntries.append(cd)
+    }
+
+    let cdOffset = UInt32(try fh.offset())
+    var cdSize: UInt32 = 0
+    for cd in cdEntries {
+        try fh.write(contentsOf: cd)
+        cdSize += UInt32(cd.count)
+    }
+
+    let totalEntries = UInt16(fileEntries.count + dirEntries.count)
+    var eocd = Data()
+    writeLE32(eocdSignature, to: &eocd)
+    writeLE16(0, to: &eocd)
+    writeLE16(0, to: &eocd)
+    writeLE16(totalEntries, to: &eocd)
+    writeLE16(totalEntries, to: &eocd)
+    writeLE32(cdSize, to: &eocd)
+    writeLE32(cdOffset, to: &eocd)
+    writeLE16(0, to: &eocd)
+    try fh.write(contentsOf: eocd)
+}

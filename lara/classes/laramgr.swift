@@ -12,6 +12,44 @@ import notify
 import UIKit
 import WebKit
 
+private func loadMutablePropertyListDictionary(from url: URL) throws -> NSMutableDictionary {
+    let data = try Data(contentsOf: url)
+    var format = PropertyListSerialization.PropertyListFormat.binary
+    let plist = try PropertyListSerialization.propertyList(
+        from: data,
+        options: [.mutableContainersAndLeaves],
+        format: &format
+    )
+    guard let dict = plist as? NSMutableDictionary else {
+        throw "Property list root is not a dictionary."
+    }
+    return dict
+}
+
+private func clearImmutableForOverwriteIfNeeded(path: String) -> String? {
+    let majorVersion = ProcessInfo.processInfo.operatingSystemVersion.majorVersion
+    guard majorVersion == 16 else { return nil }
+
+    let fm = FileManager.default
+    guard let attributes = try? fm.attributesOfItem(atPath: path) else { return nil }
+
+    var updates: [FileAttributeKey: Any] = [:]
+    if (attributes[.immutable] as? NSNumber)?.boolValue == true {
+        updates[.immutable] = false
+    }
+    if (attributes[.appendOnly] as? NSNumber)?.boolValue == true {
+        updates[.appendOnly] = false
+    }
+    guard !updates.isEmpty else { return nil }
+
+    do {
+        try fm.setAttributes(updates, ofItemAtPath: path)
+        return nil
+    } catch {
+        return "clear immutable failed: \(error.localizedDescription)"
+    }
+}
+
 final class laramgr: ObservableObject {
     @Published var log: String = ""
     @Published var hasOffsets: Bool = false
@@ -326,9 +364,11 @@ final class laramgr: ObservableObject {
     }
     
     private func sbxoverwrite(path: String, data: Data) -> (ok: Bool, message: String) {
+        let immutableMessage = clearImmutableForOverwriteIfNeeded(path: path)
         let fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0o644)
         if fd == -1 {
-            return (false, "sbx open failed: errno=\(errno) \(String(cString: strerror(errno)))")
+            let prefix = immutableMessage.map { "\($0), " } ?? ""
+            return (false, "\(prefix)sbx open failed: errno=\(errno) \(String(cString: strerror(errno)))")
         }
         defer { close(fd) }
         
@@ -345,6 +385,10 @@ final class laramgr: ObservableObject {
         
         if !wroteAll {
             return (false, "sbx write failed: errno=\(errno) \(String(cString: strerror(errno)))")
+        }
+
+        if ftruncate(fd, off_t(total)) != 0 {
+            return (false, "sbx truncate failed: errno=\(errno) \(String(cString: strerror(errno)))")
         }
         
         return (true, "ok (\(total) bytes)")
@@ -577,11 +621,7 @@ final class laramgr: ObservableObject {
             if !fm.fileExists(atPath: path) {
                 if !force { return (false, "file at \(path) does not exist or couldn't be found") }
             } else {
-                if let dictfromplist = NSMutableDictionary(contentsOf: URL(fileURLWithPath: path)) {
-                    dict = dictfromplist
-                } else {
-                    return (false, "could not convert plist at \(path) to readable data")
-                }
+                dict = try loadMutablePropertyListDictionary(from: URL(fileURLWithPath: path))
             }
             if let value = key.value {
                 dict[key.key] = value
@@ -611,14 +651,11 @@ final class laramgr: ObservableObject {
         do {
             let fm = FileManager.default
             if fm.fileExists(atPath: path) {
-                if let dict = NSDictionary(contentsOf: URL(fileURLWithPath: path)) {
-                    if let value = dict[key] {
-                        return (true, "success", value)
-                    } else {
-                        return (false, "key \(key) not found", nil)
-                    }
+                let dict = try loadMutablePropertyListDictionary(from: URL(fileURLWithPath: path))
+                if let value = dict[key] {
+                    return (true, "success", value)
                 } else {
-                    return(false, "could not convert plist at \(path) to readable data", nil)
+                    return (false, "key \(key) not found", nil)
                 }
             } else {
                 return (false, "file at \(path) does not exist or couldn't be found", nil)
@@ -734,6 +771,39 @@ final class laramgr: ObservableObject {
             DispatchQueue.main.async {
                 self?.logmsg("remote call session destroyed")
                 completion?()
+            }
+        }
+    }
+
+    func stashKRWToLaunchd(completion: ((Bool) -> Void)? = nil) {
+        guard dsready, !rcrunning else {
+            completion?(false)
+            return
+        }
+
+        rcrunning = true
+        rcLastError = nil
+        logmsg("(persist) manually transferring KRW primitives to launchd...")
+
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            let success = transfer_krw_to_launchd()
+
+            DispatchQueue.main.async {
+                guard let self else { return }
+                self.rcrunning = false
+                if success {
+                    self.rcLastError = nil
+                    self.logmsg("(persist) manual KRW transfer to launchd succeeded")
+                } else {
+                    let error = RemoteCall.lastInitError()
+                    self.rcLastError = error
+                    if let error, !error.isEmpty {
+                        self.logmsg("(persist) manual KRW transfer to launchd failed: \(error)")
+                    } else {
+                        self.logmsg("(persist) manual KRW transfer to launchd failed")
+                    }
+                }
+                completion?(success)
             }
         }
     }

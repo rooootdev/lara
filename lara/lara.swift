@@ -133,6 +133,10 @@ struct lara: App {
 
     private func handlebg() {
         guard mgr.rcready else { return }
+        let keepSpringBoardRemoteCallAlive = UserDefaults.standard.bool(forKey: "keepSpringBoardRemoteCallAliveIOS16")
+        if isIOS16() && keepSpringBoardRemoteCallAlive {
+            return
+        }
 
         var bgTask: UIBackgroundTaskIdentifier = .invalid
 

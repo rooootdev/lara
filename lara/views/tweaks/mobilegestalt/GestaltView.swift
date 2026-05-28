@@ -362,11 +362,11 @@ struct GestaltView: View {
     
     private func loadCurrentGestalt() {
         do {
-            mgCurrentDict = try NSMutableDictionary(contentsOf: URL(fileURLWithPath: mgCurrentPath), error: ())
+            mgCurrentDict = try loadMutablePlistDictionary(from: URL(fileURLWithPath: mgCurrentPath))
             print(mgCurrentDict.description)
             prepareGestaltData()
         } catch {
-            Alertinator.shared.alert(title: "Failed to load current MobileGestalt!", body: "Please restart the app and try again.")
+            Alertinator.shared.alert(title: "Failed to load current MobileGestalt!", body: "\(error)")
         }
     }
     
@@ -381,15 +381,16 @@ struct GestaltView: View {
                 try FileManager.default.copyItem(at: mgCurrentURL, to: mgSavedURL)
             }
             
-            let mgSavedDict = try NSMutableDictionary(contentsOf: mgSavedURL, error: ())
+            let mgSavedDict = try loadMutablePlistDictionary(from: mgSavedURL)
             let cacheExtra = mgSavedDict["CacheExtra"] as? NSMutableDictionary ?? NSMutableDictionary()
             let ArtworkDict = cacheExtra["oPeik/9e8lQWMszEjbPzng"] as? NSMutableDictionary ?? NSMutableDictionary()
             
-            guard let originalSubType = ArtworkDict["ArtworkDeviceSubType"] as? Int else { throw "Failed to get ArtworkDeviceSubType!" }
-            mgOriginalSubtype = originalSubType
-
             let currentCacheExtra = mgCurrentDict["CacheExtra"] as? NSMutableDictionary ?? NSMutableDictionary()
             let currentArtworkDict = currentCacheExtra["oPeik/9e8lQWMszEjbPzng"] as? NSMutableDictionary ?? NSMutableDictionary()
+            let originalSubType = ArtworkDict["ArtworkDeviceSubType"] as? Int
+                ?? currentArtworkDict["ArtworkDeviceSubType"] as? Int
+                ?? 0
+            mgOriginalSubtype = originalSubType
             mgSubtype = currentArtworkDict["ArtworkDeviceSubType"] as? Int ?? originalSubType
 
             if let productType = currentCacheExtra["h9jDsbgj7xIVeIQ8S3/X3Q"] as? String, !productType.isEmpty {
@@ -398,7 +399,9 @@ struct GestaltView: View {
                 mgProductType = machineName()
             }
             
-            guard let deviceName = ArtworkDict["ArtworkDeviceProductDescription"] as? String else { throw "Failed to get ArtworkDeviceProductDescription!" }
+            let deviceName = ArtworkDict["ArtworkDeviceProductDescription"] as? String
+                ?? currentArtworkDict["ArtworkDeviceProductDescription"] as? String
+                ?? machineName()
             mgDeviceName = deviceName
             
             if mgDeviceName == "" {
@@ -451,7 +454,7 @@ struct GestaltView: View {
             let mgSavedURL = docsDir.appendingPathComponent("SavedGestalt.plist")
             
             if FileManager.default.fileExists(atPath: mgSavedURL.path) {
-                let restored = try NSMutableDictionary(contentsOf: mgSavedURL, error: ())
+                let restored = try loadMutablePlistDictionary(from: mgSavedURL)
                 _ = try verifyPlist(restored, targetPath: mgCurrentPath)
                 mgCurrentDict = restored
             } else {
@@ -716,7 +719,21 @@ struct GestaltView: View {
 }
 
 #Preview {
-    GestaltView(mgr: laramgr())
+    GestaltView(mgr: laramgr.shared)
+}
+
+func loadMutablePlistDictionary(from url: URL) throws -> NSMutableDictionary {
+    let data = try Data(contentsOf: url)
+    var format = PropertyListSerialization.PropertyListFormat.binary
+    let plist = try PropertyListSerialization.propertyList(
+        from: data,
+        options: [.mutableContainersAndLeaves],
+        format: &format
+    )
+    guard let dict = plist as? NSMutableDictionary else {
+        throw "Property list root is not a dictionary."
+    }
+    return dict
 }
 
 func verifyPlist(_ plist: Any, targetPath: String) throws -> Data {

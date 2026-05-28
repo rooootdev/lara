@@ -113,7 +113,9 @@ struct RemoteView: View {
                 Button {
                     run("Apply Dock Columns=\(columns)") {
                         let result = set_dock_icon_count(mgr.sbProc, Int32(columns))
-                        return "set_dock_icon_count(\(columns)) -> \(result)"
+                        return result == 0
+                            ? "set_dock_icon_count(\(columns)) -> ok"
+                            : "set_dock_icon_count(\(columns)) -> failed (\(result))"
                     }
                 } label: {
                     Text("Apply Dock Columns")
@@ -124,7 +126,9 @@ struct RemoteView: View {
                 Button {
                     run("Enable Upside Down") {
                         let result = enable_upside_down(mgr.sbProc)
-                        return "enable_upside_down() -> \(result)"
+                        return result == 0
+                            ? "enable_upside_down() -> ok"
+                            : "enable_upside_down() -> failed (\(result))"
                     }
                 } label: {
                     Text("Enable Upside Down")
@@ -135,7 +139,9 @@ struct RemoteView: View {
                 Button {
                     run("Enable Floating Dock") {
                         let result = enable_floating_dock(mgr.sbProc)
-                        return "enable_floating_dock() -> \(result)"
+                        return result == 0
+                            ? "enable_floating_dock() -> ok"
+                            : "enable_floating_dock() -> failed (\(result))"
                     }
                 } label: {
                     Text("Enable Floating Dock")
@@ -144,7 +150,9 @@ struct RemoteView: View {
                 Button {
                     run("Enable Grid App Switcher") {
                         let result = enable_grid_app_switcher(mgr.sbProc)
-                        return "enable_grid_app_switcher() -> \(result)"
+                        return result == 0
+                            ? "enable_grid_app_switcher() -> ok"
+                            : "enable_grid_app_switcher() -> failed (\(result))"
                     }
                 } label: {
                     Text("Enable Grid App Switcher (Broken animation)")
@@ -153,7 +161,9 @@ struct RemoteView: View {
                 Button {
                     run("Enable UIKit Debug Overlay") {
                         let result = enable_debug_overlay(mgr.sbProc)
-                        return "enable_debug_overlay() -> \(result)"
+                        return result == 0
+                            ? "enable_debug_overlay() -> ok"
+                            : "enable_debug_overlay() -> failed (\(result))"
                     }
                 } label: {
                     Text("Enable UIKit Debug Overlay")
@@ -522,9 +532,20 @@ struct RemoteView: View {
             DispatchQueue.main.async {
                 self.mgr.logmsg("(rc) \(result)")
                 onComplete?(result)
+                if self.isRemoteCallFailure(result) {
+                    Alertinator.shared.alert(title: "\(name) Failed", body: result)
+                }
                 self.running = false
             }
         }
+    }
+
+    private func isRemoteCallFailure(_ result: String) -> Bool {
+        let lowercased = result.lowercased()
+        return lowercased.contains("-> -1") ||
+            lowercased.contains("-> failed") ||
+            lowercased.contains(": failed") ||
+            lowercased.contains("failed to")
     }
 
     private func togglefreakydog() {

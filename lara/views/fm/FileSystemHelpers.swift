@@ -46,6 +46,22 @@ enum SantanderChown {
 }
 
 enum santanderfs {
+    static func clearImmutableIfPossible(atPath path: String) {
+        guard ProcessInfo.processInfo.operatingSystemVersion.majorVersion == 16 else {
+            return
+        }
+        do {
+            try FileManager.default.setAttributes([.immutable: false], ofItemAtPath: path)
+        } catch {
+            // Some files do not expose the immutable flag to this process; keep the original operation error.
+        }
+    }
+
+    static func removeItemClearingImmutable(atPath path: String) throws {
+        clearImmutableIfPossible(atPath: path)
+        try FileManager.default.removeItem(atPath: path)
+    }
+
     static func listdir(item: santanderitem, readsbx: Bool) -> santanderlisting {
         guard item.isdir else { return santanderlisting(items: [], empty: "Not a directory.") }
 
@@ -288,6 +304,7 @@ enum santanderfs {
         }
         guard readsbx else { return false }
         do {
+            clearImmutableIfPossible(atPath: path)
             try data.write(to: URL(fileURLWithPath: path), options: .atomic)
             return true
         } catch {

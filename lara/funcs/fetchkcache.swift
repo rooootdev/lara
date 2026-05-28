@@ -19,6 +19,8 @@ func larakcpath() -> String? {
 
 func fetchkcache() -> Bool {
     guard ds_is_ready(),
+          ds_get_our_proc() != 0,
+          ds_get_our_task() != 0,
           off_proc_p_fd != 0,
           off_filedesc_fd_ofiles != 0,
           off_fileproc_fp_glob != 0,
@@ -26,7 +28,7 @@ func fetchkcache() -> Bool {
           off_vnode_v_data != 0,
           off_namecache_nc_vp != 0,
           off_namecache_nc_child_tqe_next != 0 else {
-        globallogger.log("(fetchkcache) exploit or offsets not ready")
+        globallogger.log("(fetchkcache) exploit, self proc/task, or offsets not ready")
         return false
     }
 

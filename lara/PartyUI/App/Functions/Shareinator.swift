@@ -19,6 +19,17 @@ public func presentShareSheet(with url: URL) {
         }
         
         let activityViewController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+        
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            activityViewController.popoverPresentationController?.sourceView = topController.view
+            activityViewController.popoverPresentationController?.sourceRect = CGRect(
+                x: topController.view.bounds.midX,
+                y: topController.view.bounds.midY,
+                width: 0, height: 0
+            )
+            activityViewController.popoverPresentationController?.permittedArrowDirections = []
+        }
+        
         topController.present(activityViewController, animated: true)
     }
 }
