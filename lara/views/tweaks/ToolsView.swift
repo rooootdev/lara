@@ -178,7 +178,7 @@ struct ToolsView: View {
                     
                     Spacer()
                     
-                    Text("\(count_pid())")
+                    Text("\(count_pids())")
                         .font(.system(.body, design: .monospaced))
                         .foregroundColor(.secondary)
 
