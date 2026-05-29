@@ -149,7 +149,7 @@ struct ToolsView: View {
                     }
                 }
 
-                HStack {              
+                HStack {
                     Text("PID:")
 
                     Spacer()
@@ -171,17 +171,11 @@ struct ToolsView: View {
                 Text("Process")
             }
 
+            // MARK: - Task Manager
+
             Section {
 
                 HStack {
-                    Text("Number of Processes:")
-                    
-                    Spacer()
-                    
-                    Text("\(count_pids())")
-                        .font(.system(.body, design: .monospaced))
-                        .foregroundColor(.secondary)
-
                     Text("Process:")
 
                     Spacer()
