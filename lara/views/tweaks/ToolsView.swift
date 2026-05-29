@@ -150,6 +150,12 @@ struct ToolsView: View {
                 }
 
                 HStack {
+                    Text("Number of Processes:")
+                    
+                    Spacer()
+                    
+                    Text("\(count_pid())")
+                    
                     Text("PID:")
 
                     Spacer()
@@ -170,8 +176,6 @@ struct ToolsView: View {
             } header: {
                 Text("Process")
             }
-
-            // MARK: - Task Manager
 
             Section {
 
