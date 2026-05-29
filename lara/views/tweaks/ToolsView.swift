@@ -149,13 +149,7 @@ struct ToolsView: View {
                     }
                 }
 
-                HStack {
-                    Text("Number of Processes:")
-                    
-                    Spacer()
-                    
-                    Text("\(count_pid())")
-                    
+                HStack {              
                     Text("PID:")
 
                     Spacer()
@@ -180,6 +174,14 @@ struct ToolsView: View {
             Section {
 
                 HStack {
+                    Text("Number of Processes:")
+                    
+                    Spacer()
+                    
+                    Text("\(count_pid())")
+                        .font(.system(.body, design: .monospaced))
+                        .foregroundColor(.secondary)
+
                     Text("Process:")
 
                     Spacer()
