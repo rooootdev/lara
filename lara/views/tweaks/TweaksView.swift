@@ -39,6 +39,8 @@ struct TweaksView: View {
                         .disabled(!mgr.sbxready)
                     NavigationLink("JIT Enabler", destination: JitView())
                         .disabled(!mgr.sbxready)
+                    NavigationLink("App Downgrader", destination: DowngradeView())
+                        .disabled(!mgr.sbxready || !mgr.vfsready)
                 }
                 
                 Section(header: HeaderLabel(text: "User Interface", icon: "eye")) {
