@@ -9,7 +9,7 @@ echo
 
 xcodebuild \
   -project lara.xcodeproj \
-  -scheme lara \
+  -scheme Lara \
   -configuration Debug \
   -sdk iphoneos \
   -arch arm64e \
