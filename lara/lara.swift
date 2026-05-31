@@ -18,6 +18,20 @@ var weonadebugbuild_pjbweouttahereexclamationmark: Bool = false
 // MARK: - Accent Color
 extension Color {
     static let lightLavender = Color(red: 0.78, green: 0.70, blue: 0.95)
+
+    static let accent = Color(hex: "#848EF9")
+
+    init(hex: String) {
+        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        var int: UInt64 = 0
+        Scanner(string: hex).scanHexInt64(&int)
+
+        let r = Double((int >> 16) & 0xFF) / 255.0
+        let g = Double((int >> 8) & 0xFF) / 255.0
+        let b = Double(int & 0xFF) / 255.0
+
+        self.init(red: r, green: g, blue: b)
+    }
 }
 
 @main
@@ -79,7 +93,7 @@ struct lara: App {
                         .tag(taboptions.logs)
                 }
             }
-            .tint(.lightLavender)   // ✅ GLOBAL ACCENT COLOR
+            .tint(.accent)   // ✅ UPDATED ACCENT COLOR
             .environmentObject(mgr)
             .overlay {
                 if mgr.showrespring {
