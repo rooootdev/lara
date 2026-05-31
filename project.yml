@@ -19,8 +19,7 @@ targets:
         INFOPLIST_FILE: lara/Info.plist
         SWIFT_OBJC_BRIDGING_HEADER: lara/lara-Bridging-Header.h
         LIBRARY_SEARCH_PATHS: $(inherited) $(SRCROOT)/lib
-        FRAMEWORK_SEARCH_PATHS: $(inherited) $(SRCROOT)/lib
-        OTHER_LDFLAGS: $(inherited) -lxpf -lgrabkernel
+        OTHER_LDFLAGS: $(inherited) -lxpf -lgrabkernel -lmuffinstore
 
     dependencies:
       - sdk: UIKit.framework
