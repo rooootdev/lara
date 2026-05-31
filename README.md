@@ -93,7 +93,6 @@ Important Notes:
 ## Known Issues
 - wont work on M5, A19 and A19 Pro due to MTE
 - the kernel may panic when lara is closed from the app switcher.
-- dirtyzero does not work.
 - apps don't detect JIT enabled however they are enabled.
 - remotecall is super bugged and may not work properly.
 
