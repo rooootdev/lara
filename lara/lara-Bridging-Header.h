@@ -18,7 +18,6 @@
 #import "RemoteCall.h"
 #import "decrypt.h"
 #import "persistence.h"
-#import "MFSRootViewController.h"
 
 #import <zlib.h>
 
