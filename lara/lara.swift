@@ -8,6 +8,12 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
+let laraAccent = Color(
+    red: 175/255,
+    green: 151/255,
+    blue: 215/255
+)
+
 enum taboptions {
     case applying, tweaks, files, logs
 }
@@ -78,6 +84,7 @@ struct lara: App {
                         .tag(taboptions.logs)
                 }
             }
+            .tint(laraAccent)
             .environmentObject(mgr)
             .overlay {
                 if mgr.showrespring {
