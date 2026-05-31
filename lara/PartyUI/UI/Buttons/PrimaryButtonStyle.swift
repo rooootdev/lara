@@ -1,33 +1,53 @@
-//
-//  PrimaryButtonStyle.swift
-//  PartyUI
-//
-//  Created by lunginspector on 3/3/26.
-//
-
 import SwiftUI
 
 public struct PrimaryButtonStyle: PrimitiveButtonStyle {
-    var color: Color = .accentColor
-    var shape: Shape
-    var useFullWidth: Bool
+
+    private var color: Color
+    private var useFullWidth: Bool
+    private var isLoading: Bool
+
     @Environment(\.isEnabled) private var isEnabled
-    
-    public init(color: Color = .accentColor, foregroundStyle: Color = .accentColor, shape: Shape = .rect(cornerRadius: cornerRad.component), useFullWidth: Bool = true) {
+
+    public init(
+        color: Color = .accentColor,
+        useFullWidth: Bool = true,
+        isLoading: Bool = false
+    ) {
         self.color = color
-        self.shape = shape
         self.useFullWidth = useFullWidth
+        self.isLoading = isLoading
     }
-    
+
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .buttonStyle(.plain)
-            .foregroundStyle(isEnabled ? Color(.label) : .gray)
+            .font(.system(size: 16, weight: .semibold))
+            .foregroundStyle(isEnabled ? .white : .white.opacity(0.6))
             .frame(maxWidth: useFullWidth ? .infinity : nil)
-            .padding()
-            .background(isEnabled ? color : Color(.systemGray).opacity(0.2), in: AnyShape(shape))
-            .onTapGesture(perform: configuration.trigger)
-            .modifier(FadeAnimation())
+            .padding(.vertical, 14)
+            .padding(.horizontal, 20)
+            .background(
+                Capsule(style: .continuous)
+                    .fill(backgroundColor(isPressed: configuration.isPressed))
+            )
+            .scaleEffect(configuration.isPressed ? 0.96 : 1.0)
+            .opacity(configuration.isPressed ? 0.85 : 1.0)
+            .animation(.spring(response: 0.25, dampingFraction: 0.7), value: configuration.isPressed)
+            .onTapGesture {
+                guard isEnabled, !isLoading else { return }
+                configuration.trigger()
+
+                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            }
+            .overlay {
+                if isLoading {
+                    ProgressView()
+                        .tint(.white)
+                }
+            }
+    }
+
+    private func backgroundColor(isPressed: Bool) -> Color {
+        if !isEnabled { return .gray.opacity(0.3) }
+        return isPressed ? color.opacity(0.85) : color
     }
 }
-
