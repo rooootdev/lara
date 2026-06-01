@@ -1050,7 +1050,7 @@
 					"@executable_path/Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited) lara/lib/";
-				OTHER_LDFLAGS = "$(inherited) -lxpf -lgrabkernel -lmuffinstore";
+				OTHER_LDFLAGS = "$(inherited) -lxpf -lgrabkernel2 -lmuffinstore";
 				PRODUCT_BUNDLE_IDENTIFIER = com.roooot.lara;
 				SDKROOT = iphoneos;
 				SWIFT_OBJC_BRIDGING_HEADER = "lara/lara-Bridging-Header.h";
