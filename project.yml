@@ -18,7 +18,7 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.roooot.lara
         INFOPLIST_FILE: lara/Info.plist
         SWIFT_OBJC_BRIDGING_HEADER: lara/lara-Bridging-Header.h
-        LIBRARY_SEARCH_PATHS: $(inherited) $(SRCROOT)/lib
+        LIBRARY_SEARCH_PATHS: $(inherited) lara/lib/
         OTHER_LDFLAGS: $(inherited) -lxpf -lgrabkernel -lmuffinstore
         SWIFT_VERSION: 5.0
         SWIFT_STRICT_CONCURRENCY: minimal
