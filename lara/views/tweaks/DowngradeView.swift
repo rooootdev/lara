@@ -1,16 +1,17 @@
 import SwiftUI
+import UIKit
 
 struct RootControllerWrapper: UIViewControllerRepresentable {
-    func makeUIViewController(context: Context) -> UINavigationController {
-        UINavigationController(
-            rootViewController: MFSRootViewController()
-        )
+
+    func makeUIViewController(context: Context) -> UIViewController {
+        MFSCreateController()
     }
 
     func updateUIViewController(
-        _ uiViewController: UINavigationController,
+        _ uiViewController: UIViewController,
         context: Context
-    ) {}
+    ) {
+    }
 }
 
 struct DowngradeView: View {
