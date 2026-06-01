@@ -28,6 +28,7 @@ enum fileloc: String, CaseIterable {
 
 let mgCurrentPath = "/private/var/containers/Shared/SystemGroup/systemgroup.com.apple.mobilegestaltcache/Library/Caches/com.apple.MobileGestalt.plist"
 
+@MainActor
 struct GestaltView: View {
     @AppStorage("gestaltwarn") private var gestaltwarn: Bool = true
     @AppStorage("mgDeviceName") private var mgDeviceName: String = ""
