@@ -28,6 +28,7 @@ enum fileloc: String, CaseIterable {
 
 let mgCurrentPath = "/private/var/containers/Shared/SystemGroup/systemgroup.com.apple.mobilegestaltcache/Library/Caches/com.apple.MobileGestalt.plist"
 
+@MainActor
 struct GestaltView: View {
     @AppStorage("gestaltwarn") private var gestaltwarn: Bool = true
     @AppStorage("mgDeviceName") private var mgDeviceName: String = ""
@@ -743,19 +744,23 @@ func verifyPlist(_ plist: Any, targetPath: String) throws -> Data {
         let attrs = try fm.attributesOfItem(atPath: targetPath)
         if let current = attrs[.size] as? NSNumber,
            current.intValue == 0 {
-            Alertinator.shared.alert(
-                title: "Dangerous Plist State Detected",
-                body: "The current plist file is already 0 bytes. Overwriting has been aborted to prevent corruption."
-            )
+            Task { @MainActor in
+                Alertinator.shared.alert(
+                    title: "Dangerous Plist State Detected",
+                    body: "The current plist file is already 0 bytes. Overwriting has been aborted to prevent corruption."
+                )
+            }
             throw "Current MobileGestalt file is 0 bytes."
         }
     }
     
     guard PropertyListSerialization.propertyList(plist, isValidFor: .binary) else {
-        Alertinator.shared.alert(
-            title: "Invalid Property List",
-            body: "The plist is invalid and cannot be written safely."
-        )
+        Task { @MainActor in
+            Alertinator.shared.alert(
+                title: "Invalid Property List",
+                body: "The plist is invalid and cannot be written safely."
+            )
+        }
         throw "Invalid plist structure."
     }
     
@@ -766,10 +771,12 @@ func verifyPlist(_ plist: Any, targetPath: String) throws -> Data {
     )
     
     if data.isEmpty || data.count == 0 {
-        Alertinator.shared.alert(
-            title: "Refusing Empty Plist Write",
-            body: "The generated plist would become 0 bytes after overwrite. Operation cancelled."
-        )
+        Task { @MainActor in
+            Alertinator.shared.alert(
+                title: "Refusing Empty Plist Write",
+                body: "The generated plist would become 0 bytes after overwrite. Operation cancelled."
+            )
+        }
         throw "Serialized plist data is empty."
     }
     
@@ -780,10 +787,12 @@ func verifyPlist(_ plist: Any, targetPath: String) throws -> Data {
             format: nil
         )
     } catch {
-        Alertinator.shared.alert(
-            title: "Invalid Serialized Property List",
-            body: "The generated plist failed validation after serialization."
-        )
+        Task { @MainActor in
+            Alertinator.shared.alert(
+                title: "Invalid Serialized Property List",
+                body: "The generated plist failed validation after serialization."
+            )
+        }
         throw "Serialized plist validation failed."
     }
     

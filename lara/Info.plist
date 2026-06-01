@@ -6,6 +6,8 @@
 	<array>
 		<string>audio</string>
 	</array>
+    <key>CFBundleIdentifier</key>
+        <string>com.roooot.lara</string>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 </dict>

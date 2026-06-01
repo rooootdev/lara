@@ -1,0 +1,28 @@
+name: Project Build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: List generated files
+        run: ls -R
+
+      - name: Upload generated project
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcodeproj
+          path: "*.xcodeproj"

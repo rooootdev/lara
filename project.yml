@@ -1,0 +1,28 @@
+name: lara
+
+options:
+  bundleIdPrefix: com.roooot
+  deploymentTarget:
+    iOS: 17.0
+
+targets:
+  Lara:
+    type: application
+    platform: iOS
+
+    sources:
+      - path: lara
+
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.roooot.lara
+        INFOPLIST_FILE: lara/Info.plist
+        SWIFT_OBJC_BRIDGING_HEADER: lara/lara-Bridging-Header.h
+        LIBRARY_SEARCH_PATHS: $(inherited) lara/lib/
+        OTHER_LDFLAGS: $(inherited) -lxpf -lgrabkernel2 -lmuffinstore
+        SWIFT_VERSION: 5.0
+        SWIFT_STRICT_CONCURRENCY: minimal
+
+    dependencies:
+      - sdk: UIKit.framework
+      - sdk: Foundation.framework
