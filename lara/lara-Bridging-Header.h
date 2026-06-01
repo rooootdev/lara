@@ -18,7 +18,7 @@
 #import "RemoteCall.h"
 #import "decrypt.h"
 #import "persistence.h"
-#import "libmuffinstore.h"
+#import "MFSLauncher.h"
 
 #import <zlib.h>
 
