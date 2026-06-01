@@ -6,6 +6,8 @@
 	<array>
 		<string>audio</string>
 	</array>
+    <key>CFBundleIdentifier</key>
+        <string>com.your.app</string>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 </dict>
