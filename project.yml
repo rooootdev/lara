@@ -20,6 +20,8 @@ targets:
         SWIFT_OBJC_BRIDGING_HEADER: lara/lara-Bridging-Header.h
         LIBRARY_SEARCH_PATHS: $(inherited) $(SRCROOT)/lib
         OTHER_LDFLAGS: $(inherited) -lxpf -lgrabkernel -lmuffinstore
+        SWIFT_VERSION: 5.0
+        SWIFT_STRICT_CONCURRENCY: minimal
 
     dependencies:
       - sdk: UIKit.framework
