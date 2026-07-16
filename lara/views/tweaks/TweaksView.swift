@@ -31,6 +31,8 @@ struct TweaksView: View {
                 Section(header: HeaderLabel(text: "Apps", icon: "app")) {
                     NavigationLink("Card Overwrite", destination: CardView())
                         .disabled(!mgr.vfsready)
+                    NavigationLink("Keychain Reader", destination: KeychainView())
+                        .disabled(!mgr.sbxready)
                     NavigationLink("App Decrypt", destination: DecryptView())
                         .disabled(!mgr.sbxready)
                     NavigationLink("3 App Bypass", destination: AppsView())
