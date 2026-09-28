@@ -35,7 +35,9 @@ struct CardView: View {
     private static let cardfiles = [
         "cardBackground@2x.png",
         "cardBackgroundCombined@2x.png",
-        "cardBackgroundCombined-watch@2x.png"
+        "cardBackgroundCombined-watch@2x.png",
+        "cardBackground.pdf",
+        "cardBackgroundCombined.pdf"
     ]
 
     private struct carditem: Identifiable {
@@ -393,7 +395,7 @@ struct CardView: View {
         if lower.hasSuffix(".pdf") {
             if let doc = PDFDocument(url: URL(fileURLWithPath: card.imgpath)),
                let page = doc.page(at: 0) {
-                return page.thumbnail(of: CGSize(width: 640, height: 400), for: .cropBox)
+                return pdfThumbnail(page: page)
             }
         } else if let img = UIImage(contentsOfFile: card.imgpath) {
             return img
@@ -403,13 +405,25 @@ struct CardView: View {
             if lower.hasSuffix(".pdf") {
                 if let doc = PDFDocument(data: data),
                    let page = doc.page(at: 0) {
-                    return page.thumbnail(of: CGSize(width: 640, height: 400), for: .cropBox)
+                    return pdfThumbnail(page: page)
                 }
             } else {
                 return UIImage(data: data)
             }
         }
         return nil
+    }
+
+    private func pdfThumbnail(page: PDFPage) -> UIImage? {
+        let bounds = page.bounds(for: .cropBox)
+        guard bounds.width > 0, bounds.height > 0 else {
+            return page.thumbnail(of: CGSize(width: 280, height: 180), for: .cropBox)
+        }
+        let targetW: CGFloat = 280
+        let targetH: CGFloat = 180
+        let scale = min(targetW / bounds.width, targetH / bounds.height)
+        let size = CGSize(width: max(bounds.width * scale, 1), height: max(bounds.height * scale, 1))
+        return page.thumbnail(of: size, for: .cropBox)
     }
 
     private func applyreplace(card: carditem, imgdata: Data) {
@@ -423,11 +437,7 @@ struct CardView: View {
         if lower.hasSuffix(".png") {
             payload = image.pngData()
         } else if lower.hasSuffix(".pdf") {
-            let pdf = PDFDocument()
-            if let page = PDFPage(image: image) {
-                pdf.insert(page, at: 0)
-                payload = pdf.dataRepresentation()
-            }
+            payload = makePDFPayload(image: image, originalPath: card.imgpath)
         } else {
             payload = image.pngData()
         }
@@ -445,6 +455,24 @@ struct CardView: View {
         } else {
             status = "Failed to overwrite card"
         }
+    }
+
+    private func makePDFPayload(image: UIImage, originalPath: String) -> Data? {
+        var pageRect = CGRect(x: 0, y: 0, width: 886, height: 578)
+        if let doc = PDFDocument(url: URL(fileURLWithPath: originalPath)),
+           let page = doc.page(at: 0) {
+            let bounds = page.bounds(for: .cropBox)
+            if bounds.width > 0, bounds.height > 0 {
+                pageRect = CGRect(x: 0, y: 0, width: bounds.width, height: bounds.height)
+            }
+        }
+
+        let renderer = UIGraphicsPDFRenderer(bounds: pageRect)
+        let data = renderer.pdfData { ctx in
+            ctx.beginPage()
+            image.draw(in: pageRect)
+        }
+        return data
     }
 
     private func backupifneeded(card: carditem) {
