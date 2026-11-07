@@ -7,6 +7,23 @@
 
 import SwiftUI
 
+extension Notification.Name {
+    static let laraDecryptProgress = Notification.Name("lara.decrypt.progress")
+}
+
+// C function-pointer callbacks cannot capture `self`, so the page progress
+// travels through a global. The C callback runs on a background queue while
+// SwiftUI reads it on main, hence the lock.
+private var latestPageProgress: Double = 0.0
+private let pageProgressLock = NSLock()
+
+// Overall progress is split into phases. The C callback only knows about the
+// page loop, so copy and pack get their own slices of the bar.
+private let kDecryptPhaseStart = 0.35
+private let kDecryptPhaseSpan  = 0.50
+private let kPackPhaseStart    = 0.85
+private let kPackPhaseSpan     = 0.14
+
 struct DecryptApp: Identifiable {
     let id = UUID()
     let name: String
@@ -28,6 +45,22 @@ struct DecryptView: View {
     @State private var decryptingbid: String? = nil
     @State private var errormsg: String? = nil
     @State private var pendingdecrypt: DecryptApp? = nil
+    @State private var decryptProgress: Double = 0.0
+    @State private var appSizeBytes: Int64 = 0
+    @State private var stageText: String = ""
+
+    // Always hop to main before touching @State. NotificationCenter.Publisher
+    // delivers on the posting thread, so a background post would mutate
+    // @State off-main: SwiftUI would not repaint until the very last main
+    // thread refresh, which looked like "jumps straight to 100%".
+    private func setStage(_ text: String, _ value: Double? = nil) {
+        DispatchQueue.main.async {
+            self.stageText = text
+            if let v = value {
+                self.decryptProgress = max(self.decryptProgress, min(v, 1.0))
+            }
+        }
+    }
 
     private let documentspath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first ?? ""
 
@@ -56,6 +89,25 @@ struct DecryptView: View {
                         Image(systemName: "arrow.clockwise")
                     }
                     .disabled(!mgr.sbxready || decryptingbid != nil)
+                }
+
+                if decryptingbid != nil {
+                    Section {
+                        VStack(alignment: .leading, spacing: 6) {
+                            HStack {
+                                Text(stageText.isEmpty ? "Preparing..." : stageText)
+                                Spacer()
+                                Text("\(Int(decryptProgress * 100))%")
+                                    .monospacedDigit()
+                            }
+                            .font(.caption).foregroundColor(.secondary)
+                            ProgressView(value: decryptProgress)
+                            if appSizeBytes > 200 * 1024 * 1024 {
+                                Text(String(format: "%.2f GB app — keep lara in the foreground, screen unlocked, device charging.", Double(appSizeBytes) / 1024 / 1024 / 1024))
+                                    .font(.caption2).foregroundColor(.orange)
+                            }
+                        }
+                    } header: { Text("Progress") }
                 }
 
                 if let error = errormsg {
@@ -89,7 +141,29 @@ struct DecryptView: View {
                     laramgr.shared.logmsg("(decrypt) \(s)")
                 }
             }
+            set_progress_callback { p in
+                pageProgressLock.lock()
+                latestPageProgress = p
+                pageProgressLock.unlock()
+                // Post on main: Combine's NotificationCenter.Publisher emits
+                // synchronously on whatever thread called post().
+                DispatchQueue.main.async {
+                    NotificationCenter.default.post(name: .laraDecryptProgress, object: nil)
+                }
+            }
             if mgr.sbxready { loadApps() }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .laraDecryptProgress)) { _ in
+            // Ignore page callbacks that arrive late, after packing started.
+            guard decryptProgress < kPackPhaseStart else { return }
+            pageProgressLock.lock()
+            let p = latestPageProgress
+            pageProgressLock.unlock()
+            stageText = "Decrypting binary..."
+            // Framework binaries restart the C progress at 0, so keep the
+            // bar monotonic instead of letting it jump backwards.
+            decryptProgress = max(decryptProgress,
+                                  kDecryptPhaseStart + p * kDecryptPhaseSpan)
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
             if let app = pendingdecrypt {
@@ -172,25 +246,31 @@ struct DecryptView: View {
         guard mgr.dsready else { errormsg = "Darksword not ready, run the exploit first."; return }
         guard mgr.sbxready else { errormsg = "Sandbox not escaped."; return }
 
+        // Enumerating a multi-GB bundle can take many seconds on the main
+        // thread and gets the app killed by the 0x8badf00d watchdog. Do it in
+        // the background, then hop back for the alert.
+        decryptingbid = app.bundleID
+        errormsg = nil
+        decryptProgress = 0.0
+        stageText = "Scanning app size..."
+        pageProgressLock.lock()
+        latestPageProgress = 0.0
+        pageProgressLock.unlock()
         let appurl = URL(fileURLWithPath: app.bundlePath)
-        var total: Int64 = 0
-        if let enumerator = FileManager.default.enumerator(at: appurl, includingPropertiesForKeys: [.fileSizeKey]) {
-            for case let furi as URL in enumerator {
-                if let fs = (try? furi.resourceValues(forKeys: [.fileSizeKey]))?.fileSize {
-                    total += Int64(fs)
+        DispatchQueue.global(qos: .userInitiated).async {
+            var total: Int64 = 0
+            if let enumerator = FileManager.default.enumerator(at: appurl, includingPropertiesForKeys: [.fileSizeKey]) {
+                for case let furi as URL in enumerator {
+                    if let fs = (try? furi.resourceValues(forKeys: [.fileSizeKey]))?.fileSize {
+                        total += Int64(fs)
+                    }
                 }
             }
+            DispatchQueue.main.async {
+                self.appSizeBytes = total
+                self.runDecrypt(app)
+            }
         }
-        if total > 200 * 1024 * 1024 {
-            Alertinator.shared.alert(
-                title: "Large App",
-                body: "This app is over 200 MB, decryption may take a while.",
-                actionLabel: "Continue",
-                action: { self.runDecrypt(app) }
-            )
-            return
-        }
-        runDecrypt(app)
     }
 
     func runDecrypt(_ app: DecryptApp) {
@@ -256,10 +336,38 @@ struct DecryptView: View {
         let ipaPath = documentspath + "/Decrypted/" + ipaName
 
         laramgr.shared.logmsg("(decrypt) decrypting \(app.bundleID)...")
+        laramgr.shared.logmsg("(decrypt) work dir: \(workDir)")
+        stageText = "Copying bundle..."
+
+        // The old code's only background task was the 3-second "relaunch me"
+        // one, so the long job ran with no assertion and got suspended as soon
+        // as the screen locked / the user switched away.
+        var bgTask: UIBackgroundTaskIdentifier = .invalid
+        bgTask = UIApplication.shared.beginBackgroundTask(withName: "AppDecrypt") {
+            UIApplication.shared.endBackgroundTask(bgTask)
+        }
 
         DispatchQueue.global(qos: .userInitiated).async {
+            defer {
+                DispatchQueue.main.async {
+                    UIApplication.shared.endBackgroundTask(bgTask)
+                }
+            }
             let fm = FileManager.default
 
+            if let values = try? URL(fileURLWithPath: documentspath)
+                .resourceValues(forKeys: [.volumeAvailableCapacityForImportantUsageKey]),
+               let free = values.volumeAvailableCapacityForImportantUsage {
+                let needed = Int64(appSizeBytes) * 3   // copy + IPA + headroom
+                laramgr.shared.logmsg(String(format: "(decrypt) free space %.2f GiB, want ~%.2f GiB",
+                                             Double(free) / 1024 / 1024 / 1024,
+                                             Double(needed) / 1024 / 1024 / 1024))
+                if free < needed {
+                    laramgr.shared.logmsg("(decrypt) WARNING: low disk space, output may be truncated")
+                }
+            }
+
+            laramgr.shared.logmsg("(decrypt) existing work dir (if any) will be removed: \(workDir)")
             try? fm.removeItem(atPath: workDir)
             try? fm.createDirectory(atPath: payloadDir, withIntermediateDirectories: true)
 
@@ -272,18 +380,41 @@ struct DecryptView: View {
                 return
             }
 
+            var copyFailures = 0
+            var copiedBytes: Int64 = 0
+            var lastCopyReport: Int64 = 0
+            let copyTotal = max(Double(appSizeBytes), 1.0)
             for case let subpath as String in enumerator {
                 let src = (app.bundlePath as NSString).appendingPathComponent(subpath)
                 let dst = (destAppPath as NSString).appendingPathComponent(subpath)
                 var isDir: ObjCBool = false
                 guard fm.fileExists(atPath: src, isDirectory: &isDir) else { continue }
-                if isDir.boolValue {
-                    try? fm.createDirectory(atPath: dst, withIntermediateDirectories: true)
-                } else {
-                    try? fm.copyItem(atPath: src, toPath: dst)
+                do {
+                    if isDir.boolValue {
+                        try fm.createDirectory(atPath: dst, withIntermediateDirectories: true)
+                    } else {
+                        try fm.copyItem(atPath: src, toPath: dst)
+                        if let sz = (try? fm.attributesOfItem(atPath: dst)[.size]) as? NSNumber {
+                            copiedBytes += sz.int64Value
+                        }
+                    }
+                } catch {
+                    copyFailures += 1
+                    if copyFailures <= 5 {
+                        laramgr.shared.logmsg("(decrypt) copy failed for \(subpath): \(error.localizedDescription)")
+                    }
+                }
+                if copiedBytes - lastCopyReport >= 32 * 1024 * 1024 {
+                    lastCopyReport = copiedBytes
+                    let frac = min(Double(copiedBytes) / copyTotal, 1.0)
+                    self.setStage("Copying bundle...", kDecryptPhaseStart * frac)
                 }
             }
+            if copyFailures > 0 {
+                laramgr.shared.logmsg("(decrypt) WARNING: \(copyFailures) files failed to copy; IPA will be incomplete")
+            }
 
+            self.setStage("Decrypting binary...", kDecryptPhaseStart)
             let mainBinary = destAppPath + "/" + app.executable
             let mainRet = decrypt_binary_pid((app.bundlePath + "/" + app.executable), pid, mainBinary)
             guard mainRet == 0 else {
@@ -324,21 +455,30 @@ struct DecryptView: View {
                 return
             }
 
+            self.setStage("Packing IPA...", kPackPhaseStart)
             do {
-                try createZipArchive(
+                try createZipArchiveStreaming(
                     fromDirectory: URL(fileURLWithPath: workDir, isDirectory: true),
-                    to: URL(fileURLWithPath: ipaPath)
+                    to: URL(fileURLWithPath: ipaPath),
+                    progress: { frac in
+                        self.setStage("Packing IPA...",
+                                      kPackPhaseStart + frac * kPackPhaseSpan)
+                    }
                 )
             } catch {
+                // Deliberately keep workDir: Payload/ already contains the
+                // decrypted binary, so it can be zipped off-device instead.
                 DispatchQueue.main.async {
                     decryptingbid = nil
                     errormsg = "Failed to create ipa: \(error.localizedDescription)"
                     laramgr.shared.logmsg("(decrypt) zip failed: \(error.localizedDescription)")
+                    laramgr.shared.logmsg("(decrypt) decrypted bundle preserved at \(payloadDir)")
                 }
                 return
             }
 
             try? fm.removeItem(atPath: workDir)
+            self.setStage("Done", 1.0)
 
             DispatchQueue.main.async {
                 decryptingbid = nil
