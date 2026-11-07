@@ -548,3 +548,274 @@ public func createZipArchive(fromDirectory sourceURL: URL, to destinationURL: UR
     writeLE16(0, to: &eocd)
     try fh.write(contentsOf: eocd)
 }
+
+// MARK: - Streaming writer (constant memory) for App Decrypt
+//
+// createZipArchive() above loads *every* file of the bundle into RAM with
+// Data(contentsOf:) and keeps all of them alive in `fileEntries` until the
+// archive is finished. A 2.4 GB app therefore needs >2.4 GB of resident
+// memory inside lara and is killed by jetsam. It also uses ZIP32 fields only.
+// This variant streams one file at a time, keeps only small central-directory
+// records in memory, and emits ZIP64 records when offsets/sizes need them.
+
+private func writeLE64(_ value: UInt64, to data: inout Data) {
+    withUnsafeBytes(of: value.littleEndian) { data.append(contentsOf: $0) }
+}
+
+private func streamCRC32(of url: URL) throws -> (crc: UInt32, size: UInt64) {
+    guard let input = InputStream(url: url) else {
+        throw ZipError.corruptArchive("(zip) cannot open \(url.lastPathComponent)")
+    }
+    input.open()
+    defer { input.close() }
+
+    let chunkSize = 1 << 20
+    var buffer = [UInt8](repeating: 0, count: chunkSize)
+    var crc: uLong = 0
+    var size: UInt64 = 0
+
+    while true {
+        let n = buffer.withUnsafeMutableBytes { raw -> Int in
+            guard let base = raw.baseAddress else { return 0 }
+            return input.read(base.assumingMemoryBound(to: UInt8.self), maxLength: chunkSize)
+        }
+        if n < 0 {
+            throw ZipError.corruptArchive("(zip) read failed on \(url.lastPathComponent)")
+        }
+        if n == 0 { break }
+        crc = buffer.withUnsafeBytes { raw -> uLong in
+            guard let base = raw.baseAddress else { return crc }
+            return crc32(crc, base.assumingMemoryBound(to: Bytef.self), uInt(n))
+        }
+        size += UInt64(n)
+    }
+    return (UInt32(crc & 0xffff_ffff), size)
+}
+
+private func appendZip64Extra(usize: UInt64, csize: UInt64, offset: UInt64?, to data: inout Data) {
+    writeLE16(0x0001, to: &data)
+    writeLE16(UInt16(offset == nil ? 16 : 24), to: &data)
+    writeLE64(usize, to: &data)
+    writeLE64(csize, to: &data)
+    if let offset = offset { writeLE64(offset, to: &data) }
+}
+
+public func createZipArchiveStreaming(fromDirectory sourceURL: URL,
+                                      to destinationURL: URL,
+                                      progress: ((Double) -> Void)? = nil) throws {
+    let mgr = laramgr.shared
+    let fm = FileManager.default
+    let resolvedSource = sourceURL.resolvingSymlinksInPath()
+
+    guard let enumerator = fm.enumerator(at: resolvedSource,
+                                         includingPropertiesForKeys: [.isDirectoryKey, .fileSizeKey],
+                                         options: [.skipsHiddenFiles]) else {
+        mgr.logmsg("(zip) cannot enumerate source directory")
+        throw ZipError.corruptArchive("(zip) cannot enumerate source directory")
+    }
+
+    // Only paths are retained here, never file contents.
+    var files: [(url: URL, name: String)] = []
+    var dirs: [String] = []
+    var totalBytes: UInt64 = 0
+    for case let fileURL as URL in enumerator {
+        let resolvedFile = fileURL.resolvingSymlinksInPath()
+        guard let relRange = resolvedFile.path.range(of: resolvedSource.path + "/") else { continue }
+        let relPath = String(resolvedFile.path[relRange.upperBound...])
+        var isDir: ObjCBool = false
+        guard fm.fileExists(atPath: fileURL.path, isDirectory: &isDir) else { continue }
+        if isDir.boolValue { dirs.append(relPath + "/") }
+        else {
+            files.append((fileURL, relPath))
+            if let sz = try? fileURL.resourceValues(forKeys: [.fileSizeKey]).fileSize {
+                totalBytes += UInt64(sz)
+            }
+        }
+    }
+
+    try? fm.removeItem(at: destinationURL)
+    guard fm.createFile(atPath: destinationURL.path, contents: nil, attributes: nil) else {
+        mgr.logmsg("(zip) cannot create output file")
+        throw ZipError.corruptArchive("(zip) cannot create output file")
+    }
+    let fh = try FileHandle(forWritingTo: destinationURL)
+    defer { try? fh.close() }
+
+    var cdEntries: [Data] = []
+    cdEntries.reserveCapacity(files.count + dirs.count)
+    let chunkSize = 1 << 20
+    var bytesDone: UInt64 = 0
+    var lastReportedBytes: UInt64 = 0
+
+    for entry in files {
+        let nameData = entry.name.data(using: .utf8) ?? Data()
+        guard nameData.count <= 0xffff else { continue }
+
+        // Pass 1: CRC + real size (constant memory).
+        let (crc, size) = try streamCRC32(of: entry.url)
+        let offset = UInt64(try fh.offset())
+        let zip64 = size > 0xffff_ffff || offset > 0xffff_ffff
+        let size32: UInt32 = zip64 ? 0xffff_ffff : UInt32(size)
+        let off32: UInt32 = zip64 ? 0xffff_ffff : UInt32(offset)
+
+        var lfhExtra = Data()
+        if zip64 { appendZip64Extra(usize: size, csize: size, offset: nil, to: &lfhExtra) }
+
+        var lfh = Data()
+        writeLE32(lfhSignature, to: &lfh)
+        writeLE16(zip64 ? 45 : 20, to: &lfh)   // version needed
+        writeLE16(0x0800, to: &lfh)            // UTF-8 filenames
+        writeLE16(0, to: &lfh)                 // stored, no compression
+        writeLE16(0, to: &lfh)                 // time
+        writeLE16(0, to: &lfh)                 // date
+        writeLE32(crc, to: &lfh)
+        writeLE32(size32, to: &lfh)
+        writeLE32(size32, to: &lfh)
+        writeLE16(UInt16(nameData.count), to: &lfh)
+        writeLE16(UInt16(lfhExtra.count), to: &lfh)
+        try fh.write(contentsOf: lfh)
+        try fh.write(contentsOf: nameData)
+        if !lfhExtra.isEmpty { try fh.write(contentsOf: lfhExtra) }
+
+        // Pass 2: stream the payload straight to the archive.
+        guard let input = InputStream(url: entry.url) else {
+            throw ZipError.corruptArchive("(zip) cannot reopen \(entry.name)")
+        }
+        input.open()
+        var buffer = [UInt8](repeating: 0, count: chunkSize)
+        var written: UInt64 = 0
+        while true {
+            let n = buffer.withUnsafeMutableBytes { raw -> Int in
+                guard let base = raw.baseAddress else { return 0 }
+                return input.read(base.assumingMemoryBound(to: UInt8.self), maxLength: chunkSize)
+            }
+            if n <= 0 { break }
+            try fh.write(contentsOf: Data(buffer[0..<n]))
+            written += UInt64(n)
+        }
+        input.close()
+        guard written == size else {
+            throw ZipError.corruptArchive("(zip) short write for \(entry.name)")
+        }
+
+        // Report archive progress on ~32 MiB boundaries so the progress bar
+        // keeps moving during the multi-GB packing phase instead of jumping.
+        bytesDone += written
+        if bytesDone - lastReportedBytes >= 32 * 1024 * 1024 {
+            lastReportedBytes = bytesDone
+            let frac = totalBytes > 0 ? Double(bytesDone) / Double(totalBytes) : 1.0
+            progress?(min(max(frac, 0.0), 1.0))
+        }
+
+        var cdExtra = Data()
+        if zip64 { appendZip64Extra(usize: size, csize: size, offset: offset, to: &cdExtra) }
+
+        var cd = Data()
+        writeLE32(cdSignature, to: &cd)
+        writeLE16(20, to: &cd)                  // version made by
+        writeLE16(zip64 ? 45 : 20, to: &cd)    // version needed
+        writeLE16(0x0800, to: &cd)
+        writeLE16(0, to: &cd)                  // stored
+        writeLE16(0, to: &cd); writeLE16(0, to: &cd)
+        writeLE32(crc, to: &cd)
+        writeLE32(size32, to: &cd)
+        writeLE32(size32, to: &cd)
+        writeLE16(UInt16(nameData.count), to: &cd)
+        writeLE16(UInt16(cdExtra.count), to: &cd)
+        writeLE16(0, to: &cd)                  // comment length
+        writeLE16(0, to: &cd)                  // disk number
+        writeLE16(0, to: &cd)                  // internal attrs
+        writeLE32(0x81A40000, to: &cd)         // external attrs (0644)
+        writeLE32(off32, to: &cd)
+        cd.append(nameData)
+        cd.append(cdExtra)
+        cdEntries.append(cd)
+    }
+
+    for dirName in dirs {
+        let nameData = dirName.data(using: .utf8) ?? Data()
+        guard nameData.count <= 0xffff else { continue }
+        let offset = UInt64(try fh.offset())
+        let zip64 = offset > 0xffff_ffff
+        let off32: UInt32 = zip64 ? 0xffff_ffff : UInt32(offset)
+
+        var lfhExtra = Data()
+        if zip64 { appendZip64Extra(usize: 0, csize: 0, offset: nil, to: &lfhExtra) }
+        var lfh = Data()
+        writeLE32(lfhSignature, to: &lfh)
+        writeLE16(zip64 ? 45 : 20, to: &lfh)
+        writeLE16(0x0800, to: &lfh)
+        writeLE16(0, to: &lfh)
+        writeLE16(0, to: &lfh); writeLE16(0, to: &lfh)
+        writeLE32(0, to: &lfh)
+        writeLE32(zip64 ? 0xffff_ffff : 0, to: &lfh)
+        writeLE32(zip64 ? 0xffff_ffff : 0, to: &lfh)
+        writeLE16(UInt16(nameData.count), to: &lfh)
+        writeLE16(UInt16(lfhExtra.count), to: &lfh)
+        try fh.write(contentsOf: lfh)
+        try fh.write(contentsOf: nameData)
+        if !lfhExtra.isEmpty { try fh.write(contentsOf: lfhExtra) }
+
+        var cdExtra = Data()
+        if zip64 { appendZip64Extra(usize: 0, csize: 0, offset: offset, to: &cdExtra) }
+        var cd = Data()
+        writeLE32(cdSignature, to: &cd)
+        writeLE16(20, to: &cd)
+        writeLE16(zip64 ? 45 : 20, to: &cd)
+        writeLE16(0x0800, to: &cd)
+        writeLE16(0, to: &cd)
+        writeLE16(0, to: &cd); writeLE16(0, to: &cd)
+        writeLE32(0, to: &cd)
+        writeLE32(zip64 ? 0xffff_ffff : 0, to: &cd)
+        writeLE32(zip64 ? 0xffff_ffff : 0, to: &cd)
+        writeLE16(UInt16(nameData.count), to: &cd)
+        writeLE16(UInt16(cdExtra.count), to: &cd)
+        writeLE16(0, to: &cd); writeLE16(0, to: &cd); writeLE16(0, to: &cd)
+        writeLE32(0x41ED0000, to: &cd)
+        writeLE32(off32, to: &cd)
+        cd.append(nameData)
+        cd.append(cdExtra)
+        cdEntries.append(cd)
+    }
+
+    let cdOffset = UInt64(try fh.offset())
+    var cdSize: UInt64 = 0
+    for cd in cdEntries {
+        try fh.write(contentsOf: cd)
+        cdSize += UInt64(cd.count)
+    }
+    let total = UInt64(cdEntries.count)
+    let useZip64 = cdOffset > 0xffff_ffff || cdSize > 0xffff_ffff || total > 0xffff
+
+    if useZip64 {
+        let z64Offset = UInt64(try fh.offset())
+        var z64 = Data()
+        writeLE32(zip64EOCDRecordSignature, to: &z64)
+        writeLE64(44, to: &z64)
+        writeLE16(45, to: &z64); writeLE16(45, to: &z64)
+        writeLE32(0, to: &z64); writeLE32(0, to: &z64)
+        writeLE64(total, to: &z64); writeLE64(total, to: &z64)
+        writeLE64(cdSize, to: &z64); writeLE64(cdOffset, to: &z64)
+        try fh.write(contentsOf: z64)
+
+        var loc = Data()
+        writeLE32(zip64EOCDLocatorSignature, to: &loc)
+        writeLE32(0, to: &loc)
+        writeLE64(z64Offset, to: &loc)
+        writeLE32(1, to: &loc)
+        try fh.write(contentsOf: loc)
+    }
+
+    var eocd = Data()
+    writeLE32(eocdSignature, to: &eocd)
+    writeLE16(0, to: &eocd); writeLE16(0, to: &eocd)
+    writeLE16(useZip64 ? 0xffff : UInt16(total), to: &eocd)
+    writeLE16(useZip64 ? 0xffff : UInt16(total), to: &eocd)
+    writeLE32(useZip64 ? 0xffff_ffff : UInt32(cdSize), to: &eocd)
+    writeLE32(useZip64 ? 0xffff_ffff : UInt32(cdOffset), to: &eocd)
+    writeLE16(0, to: &eocd)
+    try fh.write(contentsOf: eocd)
+
+    progress?(1.0)
+    mgr.logmsg("(zip) streaming done: \(cdEntries.count) entries, \(cdOffset) bytes of payload")
+}
